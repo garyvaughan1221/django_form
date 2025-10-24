@@ -1,4 +1,19 @@
 <style>
+    div.wrapper {
+        display: block;
+
+        > div {
+            display: inline-block;
+            vertical-align: top;
+        }
+        div.col1 {
+            width: 50%;
+            margin-right: 50px;
+        }
+        div.col2 {
+            width: 300px;
+        }
+    }
     div.field {
         margin-bottom: 15px;
     }
@@ -32,27 +47,78 @@
         }
     }
 
+    table {
+        width: 100%;
+        padding: 3px;
+
+        td {
+            padding: 5px;
+            vertical-align: top;
+        }
+        td:first-child {
+            font-weight: bold;
+            white-space: nowrap;
+        }
+        td:last-child {
+            color: rgb(22, 10, 75)
+        }
+    }
+    p{
+        margin: 0 0 37px;
+    }
 </style>
 
-<form action = "" method = "post">
-    {% csrf_token %}
 
-    <div class="field">
-    <label for="id_handle">Your Handle:</label>
-    {{ form.handle }}
+<div class="wrapper">
+    <div class="col1">
+        <form action = "" method = "post">
+            {% csrf_token %}
+            <div class="field">
+                <label for="id_handle">Your Handle:</label>
+                {{ form.handle }}
+
+                {% if form.handle.errors %}
+                    <p style="color: red;">{{ form.handle.errors.as_text }}</p>
+                {% endif %}
+            </div>
+
+            <div class="field">
+                <label for="id_date">Date:</label>
+                {{ form.date }}
+
+                {% if form.date.errors %}
+                    <p style="color: red;">{{ form.date.errors.as_text }}</p>
+                {% endif %}
+            </div>
+
+            <div class="field">
+                <label for="id_passcode">Passcode:</label>
+                {{ form.passcode }}
+
+                {% if form.passcode.errors %}
+                    <p style="color: red;">{{ form.passcode.errors.as_text }}</p>
+                {% endif %}
+            </div>
+
+            <input type = "submit" value = "Submit">
+    </form>
     </div>
-
-    <div class="field">
-    <label for="id_date">Date:</label>
-    {{ form.date }}
+    <div class="col2">
+        <table>
+            <tr>
+                <td>Accepted Handles:</td>
+                <td>BlackIce, SweetTea, Pythonista, CodeMaster</td>
+            </tr>
+            <tr>
+                <td>Accepted Passcodes:</td>
+                <td>alpha1, bravo2, charlie3, delta4</td>
+            </tr>
+            <tr>
+                <td>Date Restriction:</td>
+                <td>Date must be on or after December 21, 2012</td>
+            </tr>
+        </table>
     </div>
-
-    <div class="field">
-    <label for="id_passcode">Passcode:</label>
-    {{ form.passcode }}
-    </div>
-
-    <input type = "submit" value = "Submit">
-</form>
+</div><!-- end wrapper-->
 
 
