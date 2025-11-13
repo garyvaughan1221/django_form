@@ -1,0 +1,98 @@
+<style>
+    div.wrapper {
+        display: block;
+
+        > div {
+            display: inline-block;
+            vertical-align: top;
+        }
+        div.col1 {
+            width: 50%;
+            margin-right: 50px;
+        }
+        div.col2 {
+            width: 300px;
+        }
+    }
+    div.field {
+        margin-bottom: 15px;
+    }
+    label {
+        display: block;
+        font-weight: bold;
+        margin-bottom: 3px;
+    }
+    form {
+        background-color: #f9f9f9;
+        border: 1px solid #ddd;
+        border-radius: 10px;
+        padding: 20px;
+        width: 300px;
+    }
+    input {
+        border-radius: 9px;
+        font-size: 16px;
+        margin: 10px 0;
+        padding: 8px;
+    }
+    input[type="submit"] {
+        background-color: #475c8a;
+        border: none;
+        color: white;
+        cursor: pointer;
+        padding: 10px 15px;
+
+        &:hover {
+            background-color: #3067dd;
+        }
+    }
+
+    table {
+        width: 100%;
+        padding: 3px;
+
+        td {
+            padding: 5px;
+            vertical-align: top;
+        }
+        td:first-child {
+            font-weight: bold;
+            white-space: nowrap;
+        }
+        td:last-child {
+            color: rgb(22, 10, 75)
+        }
+    }
+    p{
+        margin: 0 0 37px;
+    }
+</style>
+
+
+<div class="wrapper">
+    <div class="col1">
+        <form action = "" method = "post">
+            {% csrf_token %}
+            <div class="field">
+                <label for="searchQuery">Search for a Church:</label>
+                {{ form.searchQuery }}
+
+                {% if form.searchQuery.errors %}
+                    <p style="color: red;">{{ form.searchQuery.errors.as_text }}</p>
+                {% endif %}
+            </div>
+
+            <input type = "submit" value = "Submit">
+    </form>
+    </div>
+    <div class="col2">
+        <table>
+            <tr>
+                <td>Accepted Handles:</td>
+                <td>BlackIce, SweetTea, Pythonista, CodeMaster</td>
+            </tr>
+        </table>
+    </div>
+</div><!-- end wrapper-->
+
+
