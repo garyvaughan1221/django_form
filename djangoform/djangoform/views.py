@@ -23,8 +23,9 @@ def form1_view(request):
                 form.add_error("passcode", "This passcode is invalid. Try again or prepare for consequences...")
 
             regDate = form.cleaned_data.get("date")
-            if regDate < date(2012, 12, 21):
-                form.add_error("date", "You are not of the Warrior sect.")
+            if regDate is not None:
+                if regDate < date(2012, 12, 21):
+                    form.add_error("date", "You are not of the Warrior sect.")
 
             if form.errors:
                 return render(request, "input_form.html", {"form": form})

@@ -28,7 +28,6 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-
 # Application definition
 
 INSTALLED_APPS = [
@@ -38,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'djangoform',
     'djangoform.models',
 ]
 
@@ -75,12 +75,24 @@ WSGI_APPLICATION = 'djangoform.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
+
+## this user is readOnly and constrained to 2020USRC db
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+    "default": {
+        "ENGINE": "django_mongodb_backend",
+        "HOST": "mongodb+srv://pythonprojects.i22ru0h.mongodb.net/",
+        "NAME": "2020USRC",
+        "USER": "mongodb_readOnly",
+        "PASSWORD": "dwg4TZoXgjCY30N6",
+        "PORT": 27017,
+        "OPTIONS": {
+            "retryWrites": "true",
+            "w": "majority",
+        },
+    },
 }
+
+
 
 
 # Password validation

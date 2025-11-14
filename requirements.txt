@@ -1,3 +1,14 @@
-pymongo>=4.0.0
 # If you prefer an async driver, use motor instead:
 # motor>=3.0.0
+## do not use djongo <=1.37 (or at all) it will degrade django to django3.12
+pymongo==4.15.4
+asgiref==3.10.0
+Django==5.2.8
+django-filter==25.2
+django-mongodb-backend==5.2.2
+djangorestframework==3.16.1
+dnspython==2.8.0
+Markdown==3.10
+pytz==2025.2
+sqlparse==0.5.3
+tzdata==2025.2
