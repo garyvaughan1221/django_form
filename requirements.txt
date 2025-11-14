@@ -1,0 +1,3 @@
+pymongo>=4.0.0
+# If you prefer an async driver, use motor instead:
+# motor>=3.0.0
