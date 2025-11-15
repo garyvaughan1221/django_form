@@ -3,9 +3,15 @@ from django.http import HttpResponse
 from django.shortcuts import render
 from .forms import form1 as f
 from .forms import churches as c
+import sys
 
 
 def form1_view(request):
+    """View used for html/input_form.html template
+
+    Handles POST and GET methods
+    """
+
     if request.method == "POST":
         form = f.InputForm(request.POST)
 
@@ -47,8 +53,13 @@ def form1_view(request):
 #  ##
 
 def churches_view(request):
+    """View used for html/churches.html template
+
+    Handles POST and GET methods
+    """
+
     if request.method == "POST":
-        form = c.ChurchSearch(request.POST)
+        form = c.ChurchSearchForm(request.POST)
 
         if form.is_valid():
             # get the search fld value from form
@@ -61,5 +72,17 @@ def churches_view(request):
 
 
     else:
-        form = c.ChurchSearch()
-    return render(request, "churches.html", {"form": form})
+        form = c.ChurchSearchForm()
+
+        try:
+            #setup initial summary data query
+            summary = c.GetChurchesSummary()
+            if(summary is not None):
+                elData = summary.find({})
+                elData = elData[0]
+                print(f"elData {elData}")
+
+        except Exception as e:
+            print (f"Error in views.churches_view: {summary}", e, file=sys.stderr)
+
+    return render(request, "churches.html", {"form": form, "summaryData": elData})

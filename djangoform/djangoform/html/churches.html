@@ -1,3 +1,5 @@
+{% load humanize %}
+
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
     integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
@@ -53,6 +55,14 @@
         }
     }
 
+    table#queryHdr {
+        background-color: #ccc;
+        font-style: normal;
+
+        td:last-child{
+            color: blue;
+        }
+    }
     table {
         width: 100%;
         padding: 3px;
@@ -68,7 +78,23 @@
         td:last-child {
             color: rgb(22, 10, 75)
         }
+
+        tr.classI {
+            td {
+            background-color: #efe9e9;
+            color: #0f0f10;
+            font-style: italic;
+            font-weight: normal;
+            }
+        }
     }
+
+    tr td.singleCol {
+        background-color: #777;
+        color: #fff;
+        text-align: center;
+    }
+
     p{
         margin: 0 0 37px;
     }
@@ -101,17 +127,67 @@
             <input type = "submit" value = "Submit">
     </form>
     </div>
+
     <div class="col2">
-        <table>
-            <tr>
+        {% if query is not None %}
+        <table class="table" id="queryHdr">
+            <tr class="classI">
                 <td>Your search query:</td>
                 <td>{{ query }}</td>
             </tr>
-            <tr>
+            <tr class="classI">
                 <td>Your search type/region:</td>
                 <td>{{ selected_id }}</td>
             </tr>
         </table>
+        {% endif %}
+
+
+        {% if summaryData is not None %}
+        <table class="table">
+            <th scope="col">
+                <tr>
+                    <td colspan="2" class="singleCol">2020 statistical data on US Church Organizations</td>
+                </tr>
+            </th>
+            <tr>
+                <td>
+                    Population 2020:
+                </td>
+                <td>
+                    {{ summaryData.Population_2020|intcomma }}
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    # of Congregations:
+                </td>
+                <td>
+                    {{ summaryData.Congregations|intcomma }}
+                </td>
+            </tr>
+            <tr>
+                <td>Congregations per 1000 population:</td>
+                <td>{{ summaryData.Congregations_per_1000_population }}</td>
+            </tr>
+            <tr>
+                <td>
+                    # of Adherents:
+                </td>
+                <td>
+                    {{ summaryData.Adherents|intcomma }}
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Adherents % of population:
+                </td>
+                <td>
+                    {{ summaryData.Adherents_percent_of_Population }}%
+                </td>
+            </tr>
+        </table>
+        {% endif %}
     </div>
 
 </div><!-- end wrapper-->
