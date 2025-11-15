@@ -1,3 +1,9 @@
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
+    crossorigin="anonymous"></script>
+
 <style>
     div.wrapper {
         display: block;
@@ -82,17 +88,32 @@
                 {% endif %}
             </div>
 
+            <div class="field">
+                <select id="searchType" name="searchType" class="form-select">
+                {% for value, label in form.ddlOptions %}
+                <option value="{{ value }}" {% if value == selected_id %}selected{% endif %}>
+                    {{ label }}
+                </option>
+                {% endfor %}
+                </select>
+            </div>
+
             <input type = "submit" value = "Submit">
     </form>
     </div>
     <div class="col2">
         <table>
             <tr>
-                <td>Accepted Handles:</td>
-                <td>BlackIce, SweetTea, Pythonista, CodeMaster</td>
+                <td>Your search query:</td>
+                <td>{{ query }}</td>
+            </tr>
+            <tr>
+                <td>Your search type/region:</td>
+                <td>{{ selected_id }}</td>
             </tr>
         </table>
     </div>
+
 </div><!-- end wrapper-->
 
 

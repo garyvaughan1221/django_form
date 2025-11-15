@@ -51,9 +51,15 @@ def churches_view(request):
         form = c.ChurchSearch(request.POST)
 
         if form.is_valid():
-            # Process the form data
-            searchQuery = form.cleaned_data.get("searchQuery")
+            # get the search fld value from form
+            txtSearchQuery = form.cleaned_data.get("searchQuery")
+            selectedSearchReqion = form.cleaned_data.get("searchType")
+
+            ## TODO: need to include logic here to do query from the database
+
+            return render(request, "churches.html", {"form": form, "selected_id": selectedSearchReqion, "query":txtSearchQuery})
+
 
     else:
         form = c.ChurchSearch()
-        return render(request, "churches.html", {"form": form})
+    return render(request, "churches.html", {"form": form})
