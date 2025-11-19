@@ -38,9 +38,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'rest_framework',
+    # 'rest_framework',
     'djangoform',
-    'djangoform.models',
+    # 'djangoform.models',
+    'djangoform.api'
 ]
 
 MIDDLEWARE = [
@@ -79,21 +80,23 @@ WSGI_APPLICATION = 'djangoform.wsgi.application'
 
 
 ## this user is readOnly and constrained to 2020USRC db
+# DATABASES = {
+#     "default": {
+#         "ENGINE": "django_mongodb_backend",
+#         "HOST": "mongodb+srv://pythonprojects.i22ru0h.mongodb.net/",
+#         "NAME": "2020USRC",
+#         "USER": "mongodb_readOnly",
+#         "PASSWORD": "dwg4TZoXgjCY30N6",
+#         "PORT": 27017,
+#         "OPTIONS": {
+#             "retryWrites": "true",
+#             "w": "majority",
+#         },
+#     },
+# }
 DATABASES = {
-    "default": {
-        "ENGINE": "django_mongodb_backend",
-        "HOST": "mongodb+srv://pythonprojects.i22ru0h.mongodb.net/",
-        "NAME": "2020USRC",
-        "USER": "mongodb_readOnly",
-        "PASSWORD": "dwg4TZoXgjCY30N6",
-        "PORT": 27017,
-        "OPTIONS": {
-            "retryWrites": "true",
-            "w": "majority",
-        },
-    },
+    # Leave this empty to indicate no database is configured
 }
-
 
 
 
@@ -138,4 +141,7 @@ STATIC_URL = '/static/'
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+DEFAULT_AUTO_FIELD = 'django_mongodb_backend.fields.ObjectIdAutoField'
+
+
+

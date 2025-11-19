@@ -3,6 +3,7 @@ from django.http import HttpResponse
 from django.shortcuts import render
 from .forms import form1 as f
 from .forms import churches as c
+from .models import churchModels
 import sys
 
 
@@ -73,16 +74,19 @@ def churches_view(request):
 
     else:
         form = c.ChurchSearchForm()
+        elData = None
 
         try:
+
             #setup initial summary data query
-            summary = c.GetChurchesSummary()
-            if(summary is not None):
-                elData = summary.find({})
-                elData = elData[0]
-                print(f"elData {elData}")
+            myVar = None
+            # summary = c.GetChurchesSummary()
+            # if(summary is not None):
+            #     elData = summary.find({})
+            #     elData = elData[0]
+            #     print(f"elData {elData}")
 
         except Exception as e:
-            print (f"Error in views.churches_view: {summary}", e, file=sys.stderr)
+            print (f"Error in views.churches_view: {e}", e, file=sys.stderr)
 
     return render(request, "churches.html", {"form": form, "summaryData": elData})

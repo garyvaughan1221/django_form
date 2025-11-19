@@ -19,8 +19,8 @@ from djangoform.views import form1_view
 from djangoform.views import churches_view
 
 urlpatterns = [
-    path("api-auth/", include("rest_framework.urls", namespace="rest_framework")),
-    path('admin/', admin.site.urls),
+    # path("api-auth/", include("rest_framework.urls", namespace="rest_framework")),
+    # path('admin/', admin.site.urls),
     path('form1/', form1_view, name='input_form'),
     path('churches/', churches_view, name='churches')
 ]
