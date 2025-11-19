@@ -1,4 +1,4 @@
-from djangoform.mongo_conn import get_client, get_db, close_client
+from djangoform.api.mongo_conn import get_client, get_db, close_client
 import sys, atexit
 
 # I could've just used a function instead of a class, but this is for example purposes
@@ -17,6 +17,7 @@ class DbClient():
         atexit.register(self.cleanup)
 
     def cleanup(self):
+        # I'm guessing this is called at page_unload or something because I'm not seeing it execute after a dbRead call...
         print("closing DB connection")
         close_client()
 

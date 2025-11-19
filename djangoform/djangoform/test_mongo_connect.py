@@ -5,7 +5,7 @@ This will print database names available to the configured user.
 Usage (PowerShell):
 python .\test_mongo_connect.py
 """
-from mongo_conn import get_client, get_db, close_client
+from djangoform.api.mongo_conn import get_client, get_db, close_client
 import sys
 
 

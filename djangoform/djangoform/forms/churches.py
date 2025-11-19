@@ -1,7 +1,8 @@
-from djangoform.mongo_conn import get_client, get_db, close_client
 import sys
 from django import forms
+from djangoform.api.mongo_conn import get_client, get_db, close_client
 from djangoform.api.db_client import DbClient
+from djangoform.api.national import National_dbQuery
 
 
 ## GLOBAL VARS
@@ -27,7 +28,7 @@ class ChurchSearchForm(forms.Form):
                                    label="Choose an option",
                                    widget=forms.Select(attrs={'class': 'form-select'}))
 
-
+##
 def GetChurchesSummary():
     """
     Get the Summary/Totals of Church Organizations in the US during year 2020
@@ -49,4 +50,29 @@ def GetChurchesSummary():
 
     finally:
         return dbCollection
+
+
+##
+def GetNationalData():
+    """
+    Function to get the National Data by various search queries
+
+    { byChurchOrg, likeTxtSearch }
+    - returns None, or a dbCollection
+    """
+    global theDB
+    dbCollection = None
+
+    try:
+        theDB = DbClient.getDB()
+
+        if(theDB is not None):
+            dbCollection = theDB.national
+            elQuery = National_dbQuery.getAll(dbCollection)
+            return elQuery
+
+    except Exception as e:
+        print (f"Error in churches.GetNationalData()", e, file=sys.stderr)
+        return dbCollection
+
 

@@ -15,11 +15,11 @@
             vertical-align: top;
         }
         div.col1 {
-            width: 50%;
+            width: 300px;
             margin-right: 50px;
         }
         div.col2 {
-            width: 300px;
+            width: 50%;
         }
     }
     div.field {
@@ -71,29 +71,46 @@
             padding: 5px;
             vertical-align: top;
         }
-        td:first-child {
-            font-weight: bold;
-            white-space: nowrap;
-        }
-        td:last-child {
-            color: rgb(22, 10, 75)
-        }
 
         tr.classI {
             td {
-            background-color: #efe9e9;
-            color: #0f0f10;
-            font-style: italic;
-            font-weight: normal;
+                background-color: #efe9e9;
+                color: #0f0f10;
+                font-style: italic;
+                font-weight: normal;
             }
         }
     }
 
-    tr td.singleCol {
-        background-color: #777;
-        color: #fff;
-        text-align: center;
+    table#summaryData {
+        td:first-child {
+            font-weight: bold;
+            /* white-space: nowrap; */
+        }
+        td:last-child {
+            color: rgb(22, 10, 75)
+        }
     }
+
+    table#nationalData {
+        td:first-child {
+            color: blue;
+        }
+        tr.hdrCols td {
+            background-color: #ecf5a7;
+            color: #000;
+            font-weight: bold;
+        }
+    }
+
+    table#summaryData, table#nationalData {
+        td.hdr {
+            background-color: #777;
+            color: #fff;
+            text-align: center;
+        }
+    }
+
 
     p{
         margin: 0 0 37px;
@@ -144,10 +161,10 @@
 
 
         {% if summaryData is not None %}
-        <table class="table">
+        <table class="table" id="summaryData">
             <th scope="col">
                 <tr>
-                    <td colspan="2" class="singleCol">2020 statistical data on US Church Organizations</td>
+                    <td colspan="2" class="hdr">2020 statistical data on US Church Organizations</td>
                 </tr>
             </th>
             <tr>
@@ -186,6 +203,39 @@
                     {{ summaryData.Adherents_percent_of_Population }}%
                 </td>
             </tr>
+        </table>
+        {% endif %}
+
+
+        {% if nationalData is not None %}
+        <table class="table" id="nationalData">
+            <tr>
+                <td colspan="3" class="hdr">2020 National US Church Organizations</td>
+            </tr>
+            <tr class="hdrCols">
+                <td>
+                    Group Name
+                </td>
+                <td>
+                    Congregations
+                </td>
+                <td>
+                    Adherents
+                </td>
+            </tr>
+            {% for churchGroup in nationalData %}
+                <tr>
+                    <td>
+                        {{ churchGroup.GroupName }}
+                    </td>
+                    <td>
+                        {{ churchGroup.Congregations|intcomma }}
+                    </td>
+                    <td>
+                        {{ churchGroup.Adherents|intcomma }}
+                    </td>
+                </tr>
+            {% endfor %}
         </table>
         {% endif %}
     </div>

@@ -68,7 +68,14 @@ def churches_view(request):
             selectedSearchReqion = form.cleaned_data.get("searchType")
 
             ## TODO: need to include logic here to do query from the database
+            if(selectedSearchReqion == 'national'):
+                national = c.GetNationalData()
+                if(national is not None):
+                    print(f"\r\nnational? {national}\r\n")
 
+                    return render(request, "churches.html", {"form": form, "nationalData": national, "selected_id": selectedSearchReqion, "query":txtSearchQuery})
+
+            # executes on page_load
             return render(request, "churches.html", {"form": form, "selected_id": selectedSearchReqion, "query":txtSearchQuery})
 
 
@@ -80,11 +87,14 @@ def churches_view(request):
 
             #setup initial summary data query
             myVar = None
-            # summary = c.GetChurchesSummary()
-            # if(summary is not None):
-            #     elData = summary.find({})
-            #     elData = elData[0]
-            #     print(f"elData {elData}")
+            summary = c.GetChurchesSummary()
+            if(summary is not None):
+                elData = summary.find({})
+                elData = elData[0]
+                print(f"elData {elData}")
+
+
+
 
         except Exception as e:
             print (f"Error in views.churches_view: {e}", e, file=sys.stderr)
