@@ -1,6 +1,6 @@
 from decimal import Decimal
 import django.db.models as models
-from djangoform.api import model_manager as mgr
+# from djangoform.api import model_manager as mgr
 import django_mongodb_backend.fields
 
 
@@ -17,8 +17,8 @@ class Summary(models.Model):
     Adherents = models.IntegerField()
     Congregations_per_1000_Population = models.CharField(max_length=10)
     Adherents_percent_of_Population = models.DecimalField(max_digits=5, decimal_places=2)
-    modelMgr = mgr.USRC2020_ModelManager()
-    allData = modelMgr.all()
+    # modelMgr = mgr.USRC2020_ModelManager()
+    # allData = modelMgr.all()
 
     class Meta:
         verbose_name = "Summary"
