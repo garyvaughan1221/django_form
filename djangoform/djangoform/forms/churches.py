@@ -43,7 +43,7 @@ def GetChurchesSummary():
 
         if(theDB is not None):
             dbCollection = theDB.summary
-            print("there is a collection")
+            # print("there is a collection")
 
     except Exception as e:
         print (f"Error connecting to MongoDB Collection: {dbCollection}", e, file=sys.stderr)
@@ -58,21 +58,22 @@ def GetNationalData():
     Function to get the National Data by various search queries
 
     { byChurchOrg, likeTxtSearch }
-    - returns None, or a dbCollection
+    - returns empty list, or a dbCollection
     """
     global theDB
-    dbCollection = None
+    listData = []
 
     try:
         theDB = DbClient.getDB()
 
         if(theDB is not None):
             dbCollection = theDB.national
-            elQuery = National_dbQuery.getAll(dbCollection)
-            return elQuery
+            listData = National_dbQuery.getAll(dbCollection)
 
     except Exception as e:
         print (f"Error in churches.GetNationalData()", e, file=sys.stderr)
-        return dbCollection
+
+    finally:
+        return listData
 
 

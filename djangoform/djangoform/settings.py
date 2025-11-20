@@ -143,5 +143,5 @@ STATIC_URL = '/static/'
 
 DEFAULT_AUTO_FIELD = 'django_mongodb_backend.fields.ObjectIdAutoField'
 
-
-
+# settings.py
+SESSION_ENGINE = 'django.contrib.sessions.backends.signed_cookies'

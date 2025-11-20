@@ -1,10 +1,11 @@
 from datetime import date
-from django.http import HttpResponse
-from django.shortcuts import render
+from django.shortcuts import render, redirect
+from django.urls import reverse
 from .forms import form1 as f
 from .forms import churches as c
-from .models import churchModels
 import sys
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+
 
 
 def form1_view(request):
@@ -45,58 +46,116 @@ def form1_view(request):
 
 
 
-
-## CODE LOGIC GOES HERE FOR CHURCHES VIEW
-#   1. need to create models
-#   2. import db connection
-#   3. create logic to query db based on searchQuery form input
-#
-#  ##
-
 def churches_view(request):
     """View used for html/churches.html template
 
     Handles POST and GET methods
     """
 
+    # this is for debugging
+    printOut = "None"
+
     if request.method == "POST":
         form = c.ChurchSearchForm(request.POST)
 
+        # ---->  hopefully doesn't bug this <---------------
+        request.session["post_flag"] = False
+
         if form.is_valid():
-            # get the search fld value from form
-            txtSearchQuery = form.cleaned_data.get("searchQuery")
-            selectedSearchReqion = form.cleaned_data.get("searchType")
-
-            ## TODO: need to include logic here to do query from the database
-            if(selectedSearchReqion == 'national'):
-                national = c.GetNationalData()
-                if(national is not None):
-                    print(f"\r\nnational? {national}\r\n")
-
-                    return render(request, "churches.html", {"form": form, "nationalData": national, "selected_id": selectedSearchReqion, "query":txtSearchQuery})
-
-            # executes on page_load
-            return render(request, "churches.html", {"form": form, "selected_id": selectedSearchReqion, "query":txtSearchQuery})
+            request.session["post_flag"] = True
+            request.session["form_data"] = form.cleaned_data
+            return redirect("/churches")
 
 
+    ## GET REQUESTS --->
     else:
         form = c.ChurchSearchForm()
-        elData = None
 
-        try:
+        page_number = request.GET.get('page')
 
-            #setup initial summary data query
-            myVar = None
-            summary = c.GetChurchesSummary()
-            if(summary is not None):
-                elData = summary.find({})
-                elData = elData[0]
-                print(f"elData {elData}")
+        printOut = request.META.get('HTTP_REFERER')
+        post_flag = request.session.get("post_flag")
+        context = { "form":form, "printOut":printOut }
+
+        if(post_flag):
+            print("\r\n\r----> post_flag\r\n\r\n")
+
+            if(request.session["form_data"]):
+                form_data = request.session["form_data"]
+                form = c.ChurchSearchForm(initial=form_data)
+
+            # can't take for granted that they're there, so reset back to clean form if not
+            selectedSearchReqion = request.session.get('selectedSearchReqion', 'national')
+
+
+            # if not search query then should go to summary
+            txtSearchQuery= request.session.get("txtSearchQuery", "")
+            print(f"post_flag searchQuery: { txtSearchQuery }")
+
+
+            # add them back to the context for the form
+            context["selected_id"] = form["searchType"].value
+            context["query"] = form["searchQuery"].value
+
+            context["printOut"] = f"form: { form_data }"
+
+            match selectedSearchReqion:
+                case 'national':
+                    result = c.GetNationalData()
+                    if(result is not None):
+                        # Show 22 Church Orgs per page
+                        paginator = Paginator(result, 22)
+
+                        try:
+                            page_obj = paginator.get_page(page_number)
+                        except PageNotAnInteger:
+                            page_obj = paginator.page(1)
+                        except EmptyPage:
+                            page_obj = paginator.page(paginator.num_pages)
+
+                case 'by_state':
+                    print("by state")
+
+                case 'by_metro':
+                    print("by metro!")
+
+                case 'by_county':
+                    print("by county...")
+
+
+
+        else:
+        #not flagged as post, so GET logic here
+        # TODO:
+            # has pageNum?
+            # else...doSummaryData()
+            summaryData = getSummaryData()
+            if not summaryData:
+                #reset from list to None for frontEnd
+                summaryData = None
+
+            context["summaryData"] = summaryData
 
 
 
 
-        except Exception as e:
-            print (f"Error in views.churches_view: {e}", e, file=sys.stderr)
+    return render(request, "churches.html", context)
 
-    return render(request, "churches.html", {"form": form, "summaryData": elData})
+
+
+def getSummaryData():
+    try:
+        #setup initial summary data query
+        listData = []
+        summary = c.GetChurchesSummary()
+        if(summary is not None):
+            # TODO: need to fix this
+            listData = summary.find({})
+            listData = listData[0]
+            # print(f"elData {elData}")
+
+    except Exception as e:
+        print (f"Error in views.churches_view: {e}", e, file=sys.stderr)
+
+    finally:
+        return listData

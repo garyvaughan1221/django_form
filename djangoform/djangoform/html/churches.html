@@ -115,8 +115,18 @@
     p{
         margin: 0 0 37px;
     }
+
+    .output {
+        color: red;
+    }
 </style>
 
+
+{% if printOut != "None" %}
+<div class="output">
+    <span>{{ printOut }}</span>
+</div>
+{% endif %}
 
 <div class="wrapper">
     <div class="col1">
@@ -236,6 +246,9 @@
                     </td>
                 </tr>
             {% endfor %}
+
+
+
         </table>
         {% endif %}
     </div>
