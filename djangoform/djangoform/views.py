@@ -54,6 +54,7 @@ def churches_view(request):
 
     # this is for debugging
     printOut = "None"
+    PER_PAGE = 5
 
     if request.method == "POST":
         form = c.ChurchSearchForm(request.POST)
@@ -102,16 +103,7 @@ def churches_view(request):
                         print('\r\n is national query\r\n')
                         result = c.GetNationalData()
                         if(result is not None):
-                            # Show 22 Church Orgs per page
-                            context["nationalData"] = result
-                            paginator = Paginator(result, 22)
-
-                            try:
-                                page_obj = paginator.get_page(page_number)
-                            except PageNotAnInteger:
-                                page_obj = paginator.page(1)
-                            except EmptyPage:
-                                page_obj = paginator.page(paginator.num_pages)
+                            context["nationalData"] = c.getPagedData(result, page_number, PER_PAGE)
 
                     case 'by_state':
                         print("\tby state")
@@ -125,19 +117,42 @@ def churches_view(request):
 
             ## handles 'initial page load' and pagination requests
             else:
-                form = c.ChurchSearchForm()
-                #not flagged as post, so GET logic here
-                # TODO:
-                    # has pageNum?
-                    # else...doSummaryData()
+                if(page_number):# this is a paging request
+                    form_data = request.session["form_data"]
+                    form = c.ChurchSearchForm(initial=form_data)
 
-                # print(f"\t\tSUMMARY CLAUSE??: { post_flag }")
-                summaryData = getSummaryData()
-                if not summaryData:
-                    #reset from list to None for frontEnd
-                    summaryData = None
+                    context["printOut"] = print(f"pageNum: {page_number}")
 
-                context["summaryData"] = summaryData
+                    # TODO: need to branch logic for searchType again...
+
+                    # now get the data
+                    result = c.GetNationalData()
+                    if(result is not None):
+                        context["nationalData"] = c.getPagedData(result, page_number, PER_PAGE)
+
+                    # these should be there if page_number...however
+                    if(request.session["searchType"]):
+                        selectedSearchReqion = request.session["searchType"]
+                    else:
+                        print("WHAT THE FUCK, WHAT THE FUCK SUMMER?")
+
+                    if(request.session["searchQuery"]):
+                        searchQuery = request.session["searchQuery"]
+                    else:
+                        print("WHAT THE FUCK, FUCK YOU MORTY!")
+
+                else:
+                    print("NO PAGE_NUMBER?????")
+
+                    form = c.ChurchSearchForm()
+                    # print(f"\t\tSUMMARY CLAUSE??: { post_flag }")
+                    summaryData = getSummaryData()
+                    if not summaryData:
+                        #reset from list to None for frontEnd
+                        summaryData = None
+
+                    context["summaryData"] = summaryData
+
                 context["form"] = form
 
         except Exception as e:

@@ -3,6 +3,7 @@ from django import forms
 from djangoform.api.mongo_conn import get_client, get_db, close_client
 from djangoform.api.db_client import DbClient
 from djangoform.api.national import National_dbQuery
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 
 ## GLOBAL VARS
@@ -52,7 +53,7 @@ def GetChurchesSummary():
         return dbCollection
 
 
-##
+## TODO: branch code for using queries
 def GetNationalData():
     """
     Function to get the National Data by various search queries
@@ -77,3 +78,20 @@ def GetNationalData():
         return listData
 
 
+def getPagedData(data_in:list, page_number:int, per_page:int):
+    """
+    Function used to get paged data.  Feed in the json object and get a sliced piece of data via Django Paginator class
+
+    returns a list
+    """
+    paginator = Paginator(data_in, per_page)
+    paged_obj = []
+
+    try:
+        paged_obj = paginator.get_page(page_number)
+    except PageNotAnInteger:
+        paged_obj = paginator.page(1)
+    except EmptyPage:
+        paged_obj = paginator.page(paginator.num_pages)
+    finally:
+        return paged_obj
