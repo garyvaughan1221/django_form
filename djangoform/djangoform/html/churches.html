@@ -22,9 +22,9 @@
             width: 50%;
         }
     }
-    div.field {
-        margin-bottom: 15px;
-    }
+    div.field { margin-bottom: 15px; }
+    div.reset-link { text-align:right; }
+    div.error-div { color: red; margin-bottom: 37px; }
     label {
         display: block;
         font-weight: bold;
@@ -63,6 +63,7 @@
             color: blue;
         }
     }
+
     table {
         width: 100%;
         padding: 3px;
@@ -74,7 +75,7 @@
 
         tr.classI {
             td {
-                background-color: #efe9e9;
+                /* background-color: #efe9e9; */
                 color: #0f0f10;
                 font-style: italic;
                 font-weight: normal;
@@ -106,6 +107,7 @@
     table#summaryData, table#nationalData {
         td.hdr {
             background-color: #777;
+            border-radius: 8px 8px 0 0;
             color: #fff;
             text-align: center;
         }
@@ -137,7 +139,7 @@
                 {{ form.searchQuery }}
 
                 {% if form.searchQuery.errors %}
-                    <p style="color: red;">{{ form.searchQuery.errors.as_text }}</p>
+                    <div class="error-div">{{ form.searchQuery.errors.as_text }}</p>
                 {% endif %}
             </div>
 
@@ -149,6 +151,10 @@
                 </option>
                 {% endfor %}
                 </select>
+            </div>
+
+            <div class="field reset-link">
+                <a href="/churches?reset=true" class="link-danger link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover">reset the form</a>
             </div>
 
             <input type = "submit" value = "Submit">

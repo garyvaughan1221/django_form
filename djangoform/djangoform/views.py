@@ -80,29 +80,22 @@ def churches_view(request):
             post_flag = request.session.get("post_flag")
 
             if(post_flag):
+                #resets the form with the reset-link
+                del request.session["post_flag"]
                 print("\r\n----> POST FLAG\r\n")
 
                 # technically the app should never post without form_data...
                 # if(request.session["form_data"]):
                 form_data = request.session["form_data"]
-                form = c.ChurchSearchForm(initial=form_data)
-                context = { "form":form, "printOut":printOut }
                 selectedSearchReqion = request.session["searchType"]
                 searchQuery = request.session["searchQuery"]
-                print(f"post_flag searchQuery: { searchQuery }")
 
-
+                form = c.ChurchSearchForm(initial=form_data)
+                context = { "form":form, "printOut":printOut }
                 # add them back to the context for the form
                 context["selected_id"] = selectedSearchReqion
                 context["query"] = searchQuery
-
-                if(form.is_valid):
-                    initial_data = form.initial
-                    print("FORM IS VALID #################", initial_data)
-                    print("initial+data", form.initial["searchQuery"])
-                    # context["printOut"] = f"form: { form.searchQuery }"
-
-                print(f"selectedSearchRegion: { selectedSearchReqion }")
+                # print(f"selectedSearchRegion: { selectedSearchReqion }")
 
                 match selectedSearchReqion:
                     case 'national':
