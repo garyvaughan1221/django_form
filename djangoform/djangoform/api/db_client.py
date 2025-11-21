@@ -30,14 +30,14 @@ class DbClient():
 
         try:
             client = get_client()
-            print("Connected to MongoDB server:", client.address)
+            # print("Connected to MongoDB server:", client.address)
 
             # If MONGODB_DB is set, show collections in that DB. Else list DB names.
             db_name = "2020USRC"
             if db_name: #could be a param...
                 theDB = get_db()
-                print(f"Using DB: {db_name}")
-                print("Collections:", theDB.list_collection_names())
+                # print(f"Using DB: {db_name}")
+                # print("Collections:", theDB.list_collection_names())
 
             return theDB
 

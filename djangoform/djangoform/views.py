@@ -64,82 +64,98 @@ def churches_view(request):
         if form.is_valid():
             request.session["post_flag"] = True
             request.session["form_data"] = form.cleaned_data
+
+            # TODO having issues with pulling these out of form_data in -GET- clause
+            request.session["searchType"] = form.cleaned_data["searchType"]
+            request.session["searchQuery"] = form.cleaned_data["searchQuery"]
             return redirect("/churches")
 
 
     ## GET REQUESTS --->
     else:
-        form = c.ChurchSearchForm()
+        context = {}
 
-        page_number = request.GET.get('page')
+        try:
+            page_number = request.GET.get('page')
+            post_flag = request.session.get("post_flag")
 
-        printOut = request.META.get('HTTP_REFERER')
-        post_flag = request.session.get("post_flag")
-        context = { "form":form, "printOut":printOut }
+            if(post_flag):
+                print("\r\n----> POST FLAG\r\n")
 
-        if(post_flag):
-            print("\r\n\r----> post_flag\r\n\r\n")
-
-            if(request.session["form_data"]):
+                # technically the app should never post without form_data...
+                # if(request.session["form_data"]):
                 form_data = request.session["form_data"]
                 form = c.ChurchSearchForm(initial=form_data)
-
-            # can't take for granted that they're there, so reset back to clean form if not
-            selectedSearchReqion = request.session.get('selectedSearchReqion', 'national')
-
-
-            # if not search query then should go to summary
-            txtSearchQuery= request.session.get("txtSearchQuery", "")
-            print(f"post_flag searchQuery: { txtSearchQuery }")
+                context = { "form":form, "printOut":printOut }
+                selectedSearchReqion = request.session["searchType"]
+                searchQuery = request.session["searchQuery"]
+                print(f"post_flag searchQuery: { searchQuery }")
 
 
-            # add them back to the context for the form
-            context["selected_id"] = form["searchType"].value
-            context["query"] = form["searchQuery"].value
+                # add them back to the context for the form
+                context["selected_id"] = selectedSearchReqion
+                context["query"] = searchQuery
 
-            context["printOut"] = f"form: { form_data }"
+                if(form.is_valid):
+                    initial_data = form.initial
+                    print("FORM IS VALID #################", initial_data)
+                    print("initial+data", form.initial["searchQuery"])
+                    # context["printOut"] = f"form: { form.searchQuery }"
 
-            match selectedSearchReqion:
-                case 'national':
-                    result = c.GetNationalData()
-                    if(result is not None):
-                        # Show 22 Church Orgs per page
-                        paginator = Paginator(result, 22)
+                print(f"selectedSearchRegion: { selectedSearchReqion }")
 
-                        try:
-                            page_obj = paginator.get_page(page_number)
-                        except PageNotAnInteger:
-                            page_obj = paginator.page(1)
-                        except EmptyPage:
-                            page_obj = paginator.page(paginator.num_pages)
+                match selectedSearchReqion:
+                    case 'national':
+                        print('\r\n is national query\r\n')
+                        result = c.GetNationalData()
+                        if(result is not None):
+                            # Show 22 Church Orgs per page
+                            context["nationalData"] = result
+                            paginator = Paginator(result, 22)
 
-                case 'by_state':
-                    print("by state")
+                            try:
+                                page_obj = paginator.get_page(page_number)
+                            except PageNotAnInteger:
+                                page_obj = paginator.page(1)
+                            except EmptyPage:
+                                page_obj = paginator.page(paginator.num_pages)
 
-                case 'by_metro':
-                    print("by metro!")
+                    case 'by_state':
+                        print("\tby state")
 
-                case 'by_county':
-                    print("by county...")
+                    case 'by_metro':
+                        print("\tby metro!")
 
-
-
-        else:
-        #not flagged as post, so GET logic here
-        # TODO:
-            # has pageNum?
-            # else...doSummaryData()
-            summaryData = getSummaryData()
-            if not summaryData:
-                #reset from list to None for frontEnd
-                summaryData = None
-
-            context["summaryData"] = summaryData
+                    case 'by_county':
+                        print("\tby county...")
 
 
+            ## handles 'initial page load' and pagination requests
+            else:
+                form = c.ChurchSearchForm()
+                #not flagged as post, so GET logic here
+                # TODO:
+                    # has pageNum?
+                    # else...doSummaryData()
+
+                # print(f"\t\tSUMMARY CLAUSE??: { post_flag }")
+                summaryData = getSummaryData()
+                if not summaryData:
+                    #reset from list to None for frontEnd
+                    summaryData = None
+
+                context["summaryData"] = summaryData
+                context["form"] = form
+
+        except Exception as e:
+            print (f"\r\n\t!!!Error:", e, file=sys.stderr)
+            # print (f"\r\n\t!!!Error:", e)
+
+        finally:
+            # print(f"context: { context } \r\n")
+            return render(request, "churches.html", context)
 
 
-    return render(request, "churches.html", context)
 
 
 
