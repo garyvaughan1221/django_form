@@ -93,7 +93,8 @@
         }
     }
 
-    table#nationalData {
+    /* TODO: may need to change to a reusable ID */
+    table#dataTable {
         td:first-child {
             color: blue;
         }
@@ -104,7 +105,7 @@
         }
     }
 
-    table#summaryData, table#nationalData {
+    table#dataTable {
         td.hdr {
             background-color: #777;
             border-radius: 8px 8px 0 0;
@@ -190,7 +191,7 @@
 
 
         {% if summaryData is not None %}
-        <table class="table" id="summaryData">
+        <table class="table" id="dataTable">
             <th scope="col">
                 <tr>
                     <td colspan="2" class="hdr">2020 statistical data on US Church Organizations</td>
@@ -241,9 +242,21 @@
             {% else %}
                 {% include 'subtemplates/nationaldata_all.html' %}
             {% endif %}
+
+            {% include 'subtemplates/paginator.html' with paged_obj=nationalData %}
         {% endif %}
 
-        {% include 'subtemplates/paginator.html' %}
+        {% if stateData is not None %}
+            {% if query != "" %}
+                {% include 'subtemplates/statedata_filtered.html' %}
+            {% else %}
+                {% include 'subtemplates/statedata_all.html' %}
+            {% endif %}
+
+            {% include 'subtemplates/paginator.html' with paged_obj=stateData %}
+        {% endif %}
+
+
     </div>
 
 </div><!-- end wrapper-->

@@ -1,8 +1,8 @@
 import sys
 from django import forms
-from djangoform.api.mongo_conn import get_client, get_db, close_client
 from djangoform.api.db_client import DbClient
 from djangoform.api.national import National_dbQuery
+from djangoform.api.by_state import State_dbQuery
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 
@@ -44,7 +44,6 @@ def GetChurchesSummary():
 
         if(theDB is not None):
             dbCollection = theDB.summary
-            # print("there is a collection")
 
     except Exception as e:
         print (f"Error connecting to MongoDB Collection: {dbCollection}", e, file=sys.stderr)
@@ -53,7 +52,8 @@ def GetChurchesSummary():
         return dbCollection
 
 
-## TODO: branch code for using queries
+
+## TODO: byChurchOrg <click_event>
 def GetNationalData(searchQuery:str):
     """
     Function to get the National Data by various search queries
@@ -83,6 +83,44 @@ def GetNationalData(searchQuery:str):
         return listData
 
 
+##
+def GetData_byState(searchQuery:str):
+    """
+    Function to get the date by State with search query
+
+    { byChurchOrg, likeTxtSearch }
+    - returns empty list, or a dbCollection
+    """
+    global theDB
+    listData = []
+
+    try:
+        theDB = DbClient.getDB()
+
+        if(theDB is not None):
+            dbCollection = theDB.by_state
+
+            #checking for lack of param passed in
+            if(searchQuery == "all"):
+                listData = State_dbQuery.getAll(dbCollection)
+            elif (searchQuery is not None):
+                listData = State_dbQuery.querySearch(dbCollection, searchQuery)
+
+    except Exception as e:
+        print (f"Error in churches.GetData_byState()", e, file=sys.stderr)
+
+    finally:
+        return listData
+
+
+
+
+
+
+
+
+
+##
 def getPagedData(data_in:list, page_number:int, per_page:int):
     """
     Function used to get paged data.  Feed in the json object and get a sliced piece of data via Django Paginator class

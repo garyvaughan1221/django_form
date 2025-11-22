@@ -89,31 +89,22 @@ def churches_view(request):
                 # technically the app should never post without form_data...
                 # if(request.session["form_data"]):
                 form_data = request.session["form_data"]
-                selectedSearchReqion = request.session["searchType"]
+                selectedSearchRegion = request.session["searchType"]
                 searchQuery = request.session["searchQuery"]
 
                 form = c.ChurchSearchForm(initial=form_data)
                 context = { "form":form, "printOut":printOut }
 
                 # add them back to the context for the form
-                context["selected_id"] = selectedSearchReqion
+                context["selected_id"] = selectedSearchRegion
                 context["query"] = searchQuery
+                searchResults = getSearchRegionData(selectedSearchRegion, searchQuery, page_number, PER_PAGE)
 
-                match selectedSearchReqion:
+                match selectedSearchRegion:
                     case 'national':
-                        print('\r\n is national query\r\n')
-                        result = c.GetNationalData(searchQuery)
-                        if(result is not None):
-                            context["nationalData"] = c.getPagedData(result, page_number, PER_PAGE)
-
+                        context["nationalData"] = searchResults
                     case 'by_state':
-                        print("\tby state")
-
-                    case 'by_metro':
-                        print("\tby metro!")
-
-                    case 'by_county':
-                        print("\tby county...")
+                        context["stateData"] = searchResults
 
 
             ## handles 'initial page load' and pagination requests
@@ -122,26 +113,24 @@ def churches_view(request):
                     form_data = request.session["form_data"]
                     form = c.ChurchSearchForm(initial=form_data)
 
-                    context["printOut"] = print(f"pageNum: {page_number}")
-
                     # TODO: need to branch logic for searchType again...
                     # these should be there if page_number...however
                     if(request.session["searchType"]):
-                        selectedSearchReqion = request.session["searchType"]
-                    else:
-                        print("WHAT THE FUCK, WHAT THE FUCK SUMMER?")
-
+                        selectedSearchRegion = request.session["searchType"]
+                        context["selected_id"] = selectedSearchRegion
 
                     if(request.session["searchQuery"]):
                         searchQuery = request.session["searchQuery"]
                         context["query"] = searchQuery
 
-
                     # now get the data
-                    result = c.GetNationalData(searchQuery)
-                    if(result is not None):
-                        context["nationalData"] = c.getPagedData(result, page_number, PER_PAGE)
+                    searchResults = getSearchRegionData(selectedSearchRegion, searchQuery, page_number, PER_PAGE)
 
+                    match selectedSearchRegion:
+                        case 'national':
+                            context["nationalData"] = searchResults
+                        case 'by_state':
+                            context["stateData"] = searchResults
 
                 else:
                     print("NO PAGE_NUMBER?????")
@@ -173,13 +162,40 @@ def getSummaryData():
         listData = []
         summary = c.GetChurchesSummary()
         if(summary is not None):
-            # TODO: need to fix this
             listData = summary.find({})
             listData = listData[0]
-            # print(f"elData {elData}")
 
     except Exception as e:
         print (f"Error in views.churches_view: {e}", e, file=sys.stderr)
 
     finally:
         return listData
+
+
+
+def getSearchRegionData(selectedSearchRegion, searchQuery, page_number, per_page):
+    """
+    A helper function to get paged data by search region
+
+        *shouldn't be any other values, it comes from a form...
+    """
+    match selectedSearchRegion:
+        case 'national':
+            print('\r\n is national query\r\n')
+            result = c.GetNationalData(searchQuery)
+            if(result is not None):
+               return c.getPagedData(result, page_number, per_page)
+
+        case 'by_state':
+            print("\tby state")
+            result = c.GetData_byState(searchQuery)
+            if(result is not None):
+                return c.getPagedData(result, page_number, per_page)
+
+        case 'by_metro':
+            print("\tby metro!")
+            return None
+
+        case 'by_county':
+            print("\tby county...")
+            return None

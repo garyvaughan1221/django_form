@@ -1,4 +1,4 @@
-import sys, json
+import sys
 
 class National_dbQuery():
   """

@@ -1,0 +1,22 @@
+{% load humanize %}
+
+<table class="table" id="dataTable">
+  <tr>
+    <td colspan="4" class="hdr">2020 US Church Organizations by State</td>
+  </tr>
+  <tr class="hdrCols">
+    <td>State Name</td>
+    <td>Group Name</td>
+    <td>Congregations</td>
+    <td>Adherents</td>
+  </tr>
+
+  {% for churchGroup in stateData %}
+  <tr>
+    <td>{{ churchGroup.StateName }}</td>
+    <td>{{ churchGroup.GroupName }}</td>
+    <td>{{ churchGroup.Congregations|intcomma }}</td>
+    <td>{{ churchGroup.Adherents|intcomma }}</td>
+  </tr>
+  {% endfor %}
+</table>
