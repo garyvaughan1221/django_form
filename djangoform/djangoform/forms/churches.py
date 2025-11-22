@@ -17,7 +17,7 @@ class ChurchSearchForm(forms.Form):
     Use in views.py or a views python/django file
     """
 
-    searchQuery = forms.CharField(max_length=20, widget=forms.TextInput(attrs={'class': 'form-control'}) )
+    searchQuery = forms.CharField(max_length=20, initial="all", widget=forms.TextInput(attrs={'class': 'form-control'}) )
 
     ddlOptions = (
         ('national', 'National'),
@@ -54,7 +54,7 @@ def GetChurchesSummary():
 
 
 ## TODO: branch code for using queries
-def GetNationalData():
+def GetNationalData(searchQuery:str):
     """
     Function to get the National Data by various search queries
 
@@ -69,7 +69,12 @@ def GetNationalData():
 
         if(theDB is not None):
             dbCollection = theDB.national
-            listData = National_dbQuery.getAll(dbCollection)
+
+            #checking for lack of param passed in
+            if(searchQuery == "all"):
+                listData = National_dbQuery.getAll(dbCollection)
+            elif (searchQuery is not None):
+                listData = National_dbQuery.querySearch(dbCollection, searchQuery)
 
     except Exception as e:
         print (f"Error in churches.GetNationalData()", e, file=sys.stderr)

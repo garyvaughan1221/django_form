@@ -121,6 +121,8 @@
     .output {
         color: red;
     }
+    small.indent { color: #777; margin-left: 15px; }
+    .greyed #id_searchQuery { color: #bbb; }
 </style>
 
 
@@ -135,15 +137,26 @@
         <form action = "" method = "post">
             {% csrf_token %}
             <div class="field">
-                <label for="searchQuery">Search for a Church:</label>
-                {{ form.searchQuery }}
+                <label for="id_searchQuery">Search for a Church:</label>
+                <small class="indent"><i>type "all" to get all data</small></i>
+
+                {% if query is not None %}
+                    <span>
+                        {{ form.searchQuery }}
+                    </span>
+                {% else %}
+                    <span class="greyed">
+                        {{ form.searchQuery }}
+                    </span>
+                {% endif %}
 
                 {% if form.searchQuery.errors %}
                     <div class="error-div">{{ form.searchQuery.errors.as_text }}</p>
                 {% endif %}
             </div>
-
+            <br />
             <div class="field">
+                <label for="searchType">Select a search region</label>
                 <select id="searchType" name="searchType" class="form-select">
                 {% for value, label in form.ddlOptions %}
                 <option value="{{ value }}" {% if value == selected_id %}selected{% endif %}>
@@ -222,41 +235,15 @@
         </table>
         {% endif %}
 
-
         {% if nationalData is not None %}
-        <table class="table" id="nationalData">
-            <tr>
-                <td colspan="3" class="hdr">2020 National US Church Organizations</td>
-            </tr>
-            <tr class="hdrCols">
-                <td>
-                    Group Name
-                </td>
-                <td>
-                    Congregations
-                </td>
-                <td>
-                    Adherents
-                </td>
-            </tr>
-            {% for churchGroup in nationalData %}
-                <tr>
-                    <td>
-                        {{ churchGroup.GroupName }}
-                    </td>
-                    <td>
-                        {{ churchGroup.Congregations|intcomma }}
-                    </td>
-                    <td>
-                        {{ churchGroup.Adherents|intcomma }}
-                    </td>
-                </tr>
-            {% endfor %}
-        </table>
-
-        {% include 'paginator.html' %}
-
+            {% if query != "" %}
+                {% include 'subtemplates/nationaldata_filtered.html' %}
+            {% else %}
+                {% include 'subtemplates/nationaldata_all.html' %}
+            {% endif %}
         {% endif %}
+
+        {% include 'subtemplates/paginator.html' %}
     </div>
 
 </div><!-- end wrapper-->

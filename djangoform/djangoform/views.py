@@ -75,6 +75,7 @@ def churches_view(request):
     ## GET REQUESTS --->
     else:
         context = {}
+        searchQuery = ""
 
         try:
             page_number = request.GET.get('page')
@@ -93,15 +94,15 @@ def churches_view(request):
 
                 form = c.ChurchSearchForm(initial=form_data)
                 context = { "form":form, "printOut":printOut }
+
                 # add them back to the context for the form
                 context["selected_id"] = selectedSearchReqion
                 context["query"] = searchQuery
-                # print(f"selectedSearchRegion: { selectedSearchReqion }")
 
                 match selectedSearchReqion:
                     case 'national':
                         print('\r\n is national query\r\n')
-                        result = c.GetNationalData()
+                        result = c.GetNationalData(searchQuery)
                         if(result is not None):
                             context["nationalData"] = c.getPagedData(result, page_number, PER_PAGE)
 
@@ -124,22 +125,23 @@ def churches_view(request):
                     context["printOut"] = print(f"pageNum: {page_number}")
 
                     # TODO: need to branch logic for searchType again...
-
-                    # now get the data
-                    result = c.GetNationalData()
-                    if(result is not None):
-                        context["nationalData"] = c.getPagedData(result, page_number, PER_PAGE)
-
                     # these should be there if page_number...however
                     if(request.session["searchType"]):
                         selectedSearchReqion = request.session["searchType"]
                     else:
                         print("WHAT THE FUCK, WHAT THE FUCK SUMMER?")
 
+
                     if(request.session["searchQuery"]):
                         searchQuery = request.session["searchQuery"]
-                    else:
-                        print("WHAT THE FUCK, FUCK YOU MORTY!")
+                        context["query"] = searchQuery
+
+
+                    # now get the data
+                    result = c.GetNationalData(searchQuery)
+                    if(result is not None):
+                        context["nationalData"] = c.getPagedData(result, page_number, PER_PAGE)
+
 
                 else:
                     print("NO PAGE_NUMBER?????")
@@ -157,10 +159,8 @@ def churches_view(request):
 
         except Exception as e:
             print (f"\r\n\t!!!Error:", e, file=sys.stderr)
-            # print (f"\r\n\t!!!Error:", e)
 
         finally:
-            # print(f"context: { context } \r\n")
             return render(request, "churches.html", context)
 
 

@@ -1,0 +1,33 @@
+{% load humanize %}
+
+<table class="table" id="nationalData">
+  <tr>
+    <td colspan="5" class="hdr">2020 National US Church Organizations</td>
+  </tr>
+  <tr class="hdrCols">
+    <td>Group Name</td>
+    <td>Congregations</td>
+    <td>Adherents</td>
+    <td>% of Adherents per Adherents</td>
+    <td># of Adherents per US population</td>
+  </tr>
+  {% for churchGroup in nationalData %}
+  <tr>
+    <td>
+      {{ churchGroup.GroupName }}
+    </td>
+    <td>
+      {{ churchGroup.Congregations|intcomma }}
+    </td>
+    <td>
+      {{ churchGroup.Adherents|intcomma }}
+    </td>
+    <td>
+      {{ churchGroup.Adherents_percent_of_Total_Adherents }}%
+    </td>
+    <td>
+      {{ churchGroup.Adherents_percent_of_Population }}%
+    </td>
+  </tr>
+  {% endfor %}
+</table>
