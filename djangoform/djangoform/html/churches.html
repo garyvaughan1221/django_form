@@ -237,7 +237,7 @@
         {% endif %}
 
         {% if nationalData is not None %}
-            {% if query != "" %}
+            {% if query != "all" %}
                 {% include 'subtemplates/nationaldata_filtered.html' %}
             {% else %}
                 {% include 'subtemplates/nationaldata_all.html' %}
@@ -247,7 +247,7 @@
         {% endif %}
 
         {% if stateData is not None %}
-            {% if query != "" %}
+            {% if query != "all" %}
                 {% include 'subtemplates/statedata_filtered.html' %}
             {% else %}
                 {% include 'subtemplates/statedata_all.html' %}

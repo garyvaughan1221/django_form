@@ -65,12 +65,14 @@ def churches_view(request):
         if form.is_valid():
             request.session["post_flag"] = True
             request.session["form_data"] = form.cleaned_data
-
-            # TODO having issues with pulling these out of form_data in -GET- clause
-            request.session["searchType"] = form.cleaned_data["searchType"]
-            request.session["searchQuery"] = form.cleaned_data["searchQuery"]
-            return redirect("/churches")
-
+            searchQuery = form.cleaned_data["searchQuery"]
+            if(searchQuery != ""):
+                request.session["searchQuery"] = searchQuery
+                request.session["searchType"] = form.cleaned_data["searchType"]
+                return redirect("/churches")
+            # else:
+        # else:
+        return render(request, 'churches.html', {'form': form})
 
     ## GET REQUESTS --->
     else:

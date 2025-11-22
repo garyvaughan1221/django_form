@@ -17,7 +17,11 @@ class ChurchSearchForm(forms.Form):
     Use in views.py or a views python/django file
     """
 
-    searchQuery = forms.CharField(max_length=20, initial="all", widget=forms.TextInput(attrs={'class': 'form-control'}) )
+    searchQuery = forms.CharField(
+        strip=True,
+        max_length=20,
+        initial="all",
+        widget=forms.TextInput(attrs={'class': 'form-control'}) )
 
     ddlOptions = (
         ('national', 'National'),
