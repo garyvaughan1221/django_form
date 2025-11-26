@@ -1,6 +1,5 @@
 from datetime import date
 from django.shortcuts import render, redirect
-from django.urls import reverse
 from .forms import form1 as f
 from .forms import churches as c
 from .forms import state_names as sn
@@ -45,7 +44,6 @@ def form1_view(request):
     return render(request, "input_form.html", {"form1": form})
 
 
-
 def churches_view(request):
     """View used for html/churches.html template
 
@@ -67,7 +65,23 @@ def churches_view(request):
             request.session["form_data"] = form.cleaned_data
             request.session["searchQuery"] = form.cleaned_data["searchQuery"]
             request.session["searchType"] = form.cleaned_data["searchType"]
-            request.session["selectedState"] = form.cleaned_data["stateNames"]
+
+            print(f"searchType?:", request.session["searchType"])
+
+
+            # need to clear this out for switching between searchTypes...for the dropdown to reset
+            if(request.session["searchType"] == 'national'):
+                if("selectedState" in request.session):
+                    print("\t\t###### deleting session var:", request.session["selectedState"])
+                    del request.session["selectedState"]
+                else:
+                    print("NO SESSION VAR...")
+            else:
+                request.session["selectedState"] = form.cleaned_data["stateNames"]
+
+
+
+
             return redirect("/churches")
 
         return render(request, 'churches.html', {'form': form})
@@ -93,9 +107,10 @@ def churches_view(request):
                 searchQuery = request.session["searchQuery"]
                 subSearchQuery = "0"
 
-                selectedState = request.session["selectedState"]
-                if(selectedState != '0'):
-                    subSearchQuery = selectedState
+                if("selectedState" in request.session):
+                    selectedState = request.session["selectedState"]
+                    if(selectedState != '0'):
+                        subSearchQuery = selectedState
 
                 form = c.ChurchSearchForm(initial=form_data)
                 context = { "form":form, "printOut":printOut }
@@ -111,7 +126,7 @@ def churches_view(request):
                     case 'by_state':
                         context["stateData"] = searchResults
                         context["selectedState"] = selectedState
-                        context["stateName"] = sn.getStateNamebyCode(subSearchQuery)[1]
+                        context["stateName"] = sn.getStateNamebyCode(subSearchQuery)
 
                         # context["printOut"] = sn.getStateNamebyCode(selectedState)[1]
 
@@ -135,7 +150,7 @@ def churches_view(request):
                     if(request.session["selectedState"]):
                         subSearchQuery = request.session["selectedState"]
                         context["selectedState"] = subSearchQuery
-                        context["stateName"] = sn.getStateNamebyCode(subSearchQuery)[1]
+                        context["stateName"] = sn.getStateNamebyCode(subSearchQuery)
                         # context["printOut"] = f"statname: {StateName}"
                         # print(f"out: --> {sn.getStateNamebyCode(subSearchQuery)}")
 

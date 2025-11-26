@@ -17,6 +17,7 @@ class State_dbQuery():
     try:
       if(dbCollection is not None):
         query = dbCollection.find({}, { "StateName": 1, "GroupName": 1, 'Congregations': 1, 'Adherents': 1, '_id':0 })
+        query = query.sort([("StateName", 1), ("GroupName", 1)])
 
         #convert to dictionary object
         listData = list(query)
@@ -55,6 +56,7 @@ class State_dbQuery():
           '_id':0
         }
         query = dbCollection.find({"GroupName": {"$regex": searchQuery, "$options": "i"}}, projection)
+        query = query.sort([("StateName", 1), ("GroupName", 1)])
         listData = list(query)
 
     except Exception as e:
@@ -91,14 +93,16 @@ class State_dbQuery():
         '_id':0
       }
       selectedStateCode = int(subSearchQuery)
-      # print("this is by_state.stateSearch.searchQuery", selectedStateCode, searchQuery)
-
       if(selectedStateCode != "0" and searchQuery == "all"):
+        print("this is by_state.stateSearch.searchQuery.ALL", selectedStateCode, searchQuery)
         query = dbCollection.find({"StateCode": selectedStateCode}, projection)
+        query = query.sort([("StateName", 1), ("GroupName", 1)])
         listData = list(query)
 
       elif(subSearchQuery != "0" and (searchQuery != "all" and searchQuery != "")):
+        print("this is by_state.stateSearch.searchQuery.-->\tSubSearchQuery", selectedStateCode, searchQuery, subSearchQuery)
         query = dbCollection.find({"StateCode": selectedStateCode, "GroupName": {"$regex": searchQuery, "$options": "i"}}, projection)
+        query = query.sort([("StateName", 1), ("GroupName", 1)])
         listData = list(query)
 
     except Exception as e:

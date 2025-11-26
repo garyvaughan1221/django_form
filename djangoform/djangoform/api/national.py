@@ -16,7 +16,7 @@ class National_dbQuery():
     listData = []
     try:
       if(dbCollection is not None):
-        query = dbCollection.find({}, { "GroupName": 1, 'Congregations': 1, 'Adherents': 1, '_id':0 })
+        query = dbCollection.find({}, { "GroupName": 1, 'Congregations': 1, 'Adherents': 1, '_id':0 }).sort("GroupName", 1)
 
         #convert to dictionary object
         listData = list(query)
@@ -52,7 +52,7 @@ class National_dbQuery():
           'Adherents_percent_of_Population': 1,
           '_id':0
         }
-        query = dbCollection.find({"GroupName": {"$regex": searchQuery, "$options": "i"}}, projection)
+        query = dbCollection.find({"GroupName": {"$regex": searchQuery, "$options": "i"}}, projection).sort("GroupName", 1)
         listData = list(query)
         # print(f"\n\n\n\n { listData } \n\n\n\n")
 

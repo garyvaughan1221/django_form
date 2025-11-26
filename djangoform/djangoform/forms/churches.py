@@ -114,7 +114,7 @@ def GetData_byState(searchQuery:str, subSearchQuery:str='0'):
             #checking for lack of param passed in
             print("in here with subsSearchQuery", subSearchQuery)
 
-
+            # TODO: refactor this 'None' away from here???  INVESTIGATE...
             if(subSearchQuery is None or subSearchQuery == ''):
                 raise Exception ("subSearchQuery is none")
 
@@ -122,8 +122,8 @@ def GetData_byState(searchQuery:str, subSearchQuery:str='0'):
                 print("has subSearchQuery and subSearchQuery", subSearchQuery)
                 listData = State_dbQuery.stateSearch(dbCollection, subSearchQuery, searchQuery)
                 # print(listData)
-            elif (searchQuery is not None):
-                print("searchQuery is not None", searchQuery)
+            elif (searchQuery is not None and searchQuery != "all"):
+                print("searchQuery is not None or all", searchQuery)
                 listData = State_dbQuery.querySearch(dbCollection, searchQuery)
             elif(searchQuery == "all"):
                 print('all by_state')

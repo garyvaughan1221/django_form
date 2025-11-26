@@ -62,4 +62,6 @@ def getStateNamebyCode(stateCode:str):
   param: stateCode(str)
   """
   stateList = list(stateNames)
-  return stateList[int(stateCode)]
+  labelIndex = 0
+  stateName = [state for state in stateList if state[labelIndex] == stateCode]
+  return stateName[0][1]
