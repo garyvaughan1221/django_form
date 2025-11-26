@@ -124,6 +124,12 @@
     }
     small.indent { color: #777; margin-left: 15px; }
     .greyed #id_searchQuery { color: #bbb; }
+    #dataTable td.pagedDataCount {
+        background-color: #2f426d;
+        color: #bbb !important;
+        font-size:small;
+        text-align:right;
+    }
 </style>
 
 
@@ -155,16 +161,19 @@
                     <div class="error-div">{{ form.searchQuery.errors.as_text }}</p>
                 {% endif %}
             </div>
+
             <br />
             <div class="field">
                 <label for="searchType">Select a search region</label>
-                <select id="searchType" name="searchType" class="form-select">
-                {% for value, label in form.ddlOptions %}
-                <option value="{{ value }}" {% if value == selected_id %}selected{% endif %}>
-                    {{ label }}
-                </option>
-                {% endfor %}
-                </select>
+                {{ form.searchType }}
+            </div>
+
+            <div id="stateNamesWrapper">
+                <br />
+                <div class="field">
+                    <label for="stateNames">Select a state</label>
+                    {{ form.stateNames }}
+                </div>
             </div>
 
             <div class="field reset-link">
@@ -184,8 +193,15 @@
             </tr>
             <tr class="classI">
                 <td>Your search type/region:</td>
-                <td>{{ selected_id }}</td>
+                <td>{{ searchType }}</td>
             </tr>
+
+            {% if selectedState != '0' %}
+            <tr class="classI">
+                <td>Your selected State:</td>
+                <td>{{ stateName  }}</td>
+            </tr>
+            {% endif %}
         </table>
         {% endif %}
 
@@ -247,7 +263,7 @@
         {% endif %}
 
         {% if stateData is not None %}
-            {% if query != "all" %}
+            {% if selectedState != '0' %}
                 {% include 'subtemplates/statedata_filtered.html' %}
             {% else %}
                 {% include 'subtemplates/statedata_all.html' %}
@@ -262,3 +278,11 @@
 </div><!-- end wrapper-->
 
 
+<script>
+    var searchType = "{{ searchType }}";
+    console.log("searchType", searchType);
+    if (searchType != "by_state") {
+        var dElem = document.getElementById("stateNamesWrapper");
+        dElem.style.display = 'none';
+    }
+</script>

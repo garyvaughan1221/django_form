@@ -3,8 +3,8 @@ from django.shortcuts import render, redirect
 from django.urls import reverse
 from .forms import form1 as f
 from .forms import churches as c
+from .forms import state_names as sn
 import sys
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 
 
@@ -65,13 +65,11 @@ def churches_view(request):
         if form.is_valid():
             request.session["post_flag"] = True
             request.session["form_data"] = form.cleaned_data
-            searchQuery = form.cleaned_data["searchQuery"]
-            if(searchQuery != ""):
-                request.session["searchQuery"] = searchQuery
-                request.session["searchType"] = form.cleaned_data["searchType"]
-                return redirect("/churches")
-            # else:
-        # else:
+            request.session["searchQuery"] = form.cleaned_data["searchQuery"]
+            request.session["searchType"] = form.cleaned_data["searchType"]
+            request.session["selectedState"] = form.cleaned_data["stateNames"]
+            return redirect("/churches")
+
         return render(request, 'churches.html', {'form': form})
 
     ## GET REQUESTS --->
@@ -91,22 +89,32 @@ def churches_view(request):
                 # technically the app should never post without form_data...
                 # if(request.session["form_data"]):
                 form_data = request.session["form_data"]
-                selectedSearchRegion = request.session["searchType"]
+                searchType = request.session["searchType"]
                 searchQuery = request.session["searchQuery"]
+                subSearchQuery = "0"
+
+                selectedState = request.session["selectedState"]
+                if(selectedState != '0'):
+                    subSearchQuery = selectedState
 
                 form = c.ChurchSearchForm(initial=form_data)
                 context = { "form":form, "printOut":printOut }
 
                 # add them back to the context for the form
-                context["selected_id"] = selectedSearchRegion
+                context["searchType"] = searchType
                 context["query"] = searchQuery
-                searchResults = getSearchRegionData(selectedSearchRegion, searchQuery, page_number, PER_PAGE)
+                searchResults = getSearchRegionData(searchType, searchQuery, page_number, PER_PAGE, subSearchQuery)
 
-                match selectedSearchRegion:
+                match searchType:
                     case 'national':
                         context["nationalData"] = searchResults
                     case 'by_state':
                         context["stateData"] = searchResults
+                        context["selectedState"] = selectedState
+                        context["stateName"] = sn.getStateNamebyCode(subSearchQuery)[1]
+
+                        # context["printOut"] = sn.getStateNamebyCode(selectedState)[1]
+
 
 
             ## handles 'initial page load' and pagination requests
@@ -114,21 +122,28 @@ def churches_view(request):
                 if(page_number):# this is a paging request
                     form_data = request.session["form_data"]
                     form = c.ChurchSearchForm(initial=form_data)
+                    subSearchQuery = ""
 
-                    # TODO: need to branch logic for searchType again...
-                    # these should be there if page_number...however
                     if(request.session["searchType"]):
-                        selectedSearchRegion = request.session["searchType"]
-                        context["selected_id"] = selectedSearchRegion
+                        searchType = request.session["searchType"]
+                        context["searchType"] = searchType
 
                     if(request.session["searchQuery"]):
                         searchQuery = request.session["searchQuery"]
                         context["query"] = searchQuery
 
-                    # now get the data
-                    searchResults = getSearchRegionData(selectedSearchRegion, searchQuery, page_number, PER_PAGE)
+                    if(request.session["selectedState"]):
+                        subSearchQuery = request.session["selectedState"]
+                        context["selectedState"] = subSearchQuery
+                        context["stateName"] = sn.getStateNamebyCode(subSearchQuery)[1]
+                        # context["printOut"] = f"statname: {StateName}"
+                        # print(f"out: --> {sn.getStateNamebyCode(subSearchQuery)}")
 
-                    match selectedSearchRegion:
+
+                    # now get the data
+                    searchResults = getSearchRegionData(searchType, searchQuery, page_number, PER_PAGE, subSearchQuery)
+
+                    match searchType:
                         case 'national':
                             context["nationalData"] = searchResults
                         case 'by_state':
@@ -149,7 +164,7 @@ def churches_view(request):
                 context["form"] = form
 
         except Exception as e:
-            print (f"\r\n\t!!!Error:", e, file=sys.stderr)
+            print (f"\r\n\t!!!Error in views.churches_view:", e, file=sys.stderr)
 
         finally:
             return render(request, "churches.html", context)
@@ -175,13 +190,13 @@ def getSummaryData():
 
 
 
-def getSearchRegionData(selectedSearchRegion, searchQuery, page_number, per_page):
+def getSearchRegionData(searchType, searchQuery, page_number, per_page, optionalSubQuery:str="0"):
     """
     A helper function to get paged data by search region
 
         *shouldn't be any other values, it comes from a form...
     """
-    match selectedSearchRegion:
+    match searchType:
         case 'national':
             print('\r\n is national query\r\n')
             result = c.GetNationalData(searchQuery)
@@ -189,8 +204,8 @@ def getSearchRegionData(selectedSearchRegion, searchQuery, page_number, per_page
                return c.getPagedData(result, page_number, per_page)
 
         case 'by_state':
-            print("\tby state")
-            result = c.GetData_byState(searchQuery)
+            print("\tviews.getSearchRegionData: by_state", optionalSubQuery)
+            result = c.GetData_byState(searchQuery, optionalSubQuery)
             if(result is not None):
                 return c.getPagedData(result, page_number, per_page)
 

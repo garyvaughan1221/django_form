@@ -4,6 +4,7 @@ from djangoform.api.db_client import DbClient
 from djangoform.api.national import National_dbQuery
 from djangoform.api.by_state import State_dbQuery
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from djangoform.forms import state_names as sn
 
 
 ## GLOBAL VARS
@@ -32,6 +33,12 @@ class ChurchSearchForm(forms.Form):
     searchType = forms.ChoiceField(choices=ddlOptions,
                                    label="Choose an option",
                                    widget=forms.Select(attrs={'class': 'form-select'}))
+
+    statename_choices = sn.stateNames
+    stateNames = forms.ChoiceField(choices=statename_choices,
+                                    label="Choose a State",
+                                    widget=forms.Select(attrs={'class': 'form-select'}))
+
 
 ##
 def GetChurchesSummary():
@@ -88,7 +95,7 @@ def GetNationalData(searchQuery:str):
 
 
 ##
-def GetData_byState(searchQuery:str):
+def GetData_byState(searchQuery:str, subSearchQuery:str='0'):
     """
     Function to get the date by State with search query
 
@@ -105,10 +112,23 @@ def GetData_byState(searchQuery:str):
             dbCollection = theDB.by_state
 
             #checking for lack of param passed in
-            if(searchQuery == "all"):
-                listData = State_dbQuery.getAll(dbCollection)
+            print("in here with subsSearchQuery", subSearchQuery)
+
+
+            if(subSearchQuery is None or subSearchQuery == ''):
+                raise Exception ("subSearchQuery is none")
+
+            if (searchQuery != "" and int(subSearchQuery) != 0):
+                print("has subSearchQuery and subSearchQuery", subSearchQuery)
+                listData = State_dbQuery.stateSearch(dbCollection, subSearchQuery, searchQuery)
+                # print(listData)
             elif (searchQuery is not None):
+                print("searchQuery is not None", searchQuery)
                 listData = State_dbQuery.querySearch(dbCollection, searchQuery)
+            elif(searchQuery == "all"):
+                print('all by_state')
+                listData = State_dbQuery.getAll(dbCollection)
+
 
     except Exception as e:
         print (f"Error in churches.GetData_byState()", e, file=sys.stderr)

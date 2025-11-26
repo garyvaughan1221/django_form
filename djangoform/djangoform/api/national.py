@@ -52,9 +52,9 @@ class National_dbQuery():
           'Adherents_percent_of_Population': 1,
           '_id':0
         }
-        query = dbCollection.find({"GroupName": {"$regex": searchQuery, "$options": "i"}}, )
+        query = dbCollection.find({"GroupName": {"$regex": searchQuery, "$options": "i"}}, projection)
         listData = list(query)
-        print(f"\n\n\n\n { listData } \n\n\n\n")
+        # print(f"\n\n\n\n { listData } \n\n\n\n")
 
     except Exception as e:
         print("Error connecting to MongoDB:", e, file=sys.stderr)
