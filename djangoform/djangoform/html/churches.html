@@ -196,7 +196,7 @@
                 <td>{{ searchType }}</td>
             </tr>
 
-            {% if selectedState != '0' %}
+            {% if searchType != 'national' and stateName != 'select a state' %}
             <tr class="classI">
                 <td>Your selected State:</td>
                 <td>{{ stateName  }}</td>
@@ -279,10 +279,27 @@
 
 
 <script>
-    var searchType = "{{ searchType }}";
-    console.log("searchType", searchType);
-    if (searchType != "by_state") {
-        var dElem = document.getElementById("stateNamesWrapper");
-        dElem.style.display = 'none';
-    }
+    document.addEventListener("DOMContentLoaded", function () {
+        const searchType = "{{ searchType }}";
+        wrapDisplay = 'none';
+
+        const stateNamesWrapper = document.getElementById("stateNamesWrapper");
+        if (searchType != "by_state") {
+            stateNamesWrapper.style.display = wrapDisplay;
+        }
+
+        const ddlSearchType = document.getElementById("id_searchType");
+        ddlSearchType.addEventListener("change", function (event) {
+            const selectedValue = event.target.value;
+
+            if(selectedValue == 'by_state') {
+                console.log("by state...")
+                wrapDisplay = '';
+            }
+            else {
+                wrapDisplay = 'none';
+            }
+            stateNamesWrapper.style.display = wrapDisplay;
+        });
+    });
 </script>

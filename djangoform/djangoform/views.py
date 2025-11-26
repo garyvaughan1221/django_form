@@ -74,6 +74,7 @@ def churches_view(request):
                 if("selectedState" in request.session):
                     print("\t\t###### deleting session var:", request.session["selectedState"])
                     del request.session["selectedState"]
+                    form.cleaned_data["stateNames"] = '0'
                 else:
                     print("NO SESSION VAR...")
             else:
@@ -101,11 +102,14 @@ def churches_view(request):
                 print("\r\n----> POST FLAG\r\n")
 
                 # technically the app should never post without form_data...
-                # if(request.session["form_data"]):
+                if('form_data' not in request.session):
+                    raise Exception ("No form data!!!")
+
                 form_data = request.session["form_data"]
                 searchType = request.session["searchType"]
                 searchQuery = request.session["searchQuery"]
                 subSearchQuery = "0"
+                selectedState = subSearchQuery
 
                 if("selectedState" in request.session):
                     selectedState = request.session["selectedState"]
@@ -123,13 +127,13 @@ def churches_view(request):
                 match searchType:
                     case 'national':
                         context["nationalData"] = searchResults
+
                     case 'by_state':
                         context["stateData"] = searchResults
                         context["selectedState"] = selectedState
                         context["stateName"] = sn.getStateNamebyCode(subSearchQuery)
 
-                        # context["printOut"] = sn.getStateNamebyCode(selectedState)[1]
-
+                print("------------>  END postFlag <-------------------")
 
 
             ## handles 'initial page load' and pagination requests
@@ -139,15 +143,15 @@ def churches_view(request):
                     form = c.ChurchSearchForm(initial=form_data)
                     subSearchQuery = ""
 
-                    if(request.session["searchType"]):
+                    if('searchType' in request.session):
                         searchType = request.session["searchType"]
                         context["searchType"] = searchType
 
-                    if(request.session["searchQuery"]):
+                    if('searchQuery' in request.session):
                         searchQuery = request.session["searchQuery"]
                         context["query"] = searchQuery
 
-                    if(request.session["selectedState"]):
+                    if('selectedState' in request.session):
                         subSearchQuery = request.session["selectedState"]
                         context["selectedState"] = subSearchQuery
                         context["stateName"] = sn.getStateNamebyCode(subSearchQuery)
@@ -179,7 +183,7 @@ def churches_view(request):
                 context["form"] = form
 
         except Exception as e:
-            print (f"\r\n\t!!!Error in views.churches_view:", e, file=sys.stderr)
+            print (f"\r\n\t!!!Error in views.churches_view > GET requests:", e, file=sys.stderr)
 
         finally:
             return render(request, "churches.html", context)
