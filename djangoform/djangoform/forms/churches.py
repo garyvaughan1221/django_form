@@ -3,8 +3,10 @@ from django import forms
 from djangoform.api.db_client import DbClient
 from djangoform.api.national import National_dbQuery
 from djangoform.api.by_state import State_dbQuery
+from djangoform.api.by_metro import Metro_dbQuery
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from djangoform.forms import state_names as sn
+from djangoform.forms import metro_names as mn
 
 
 ## GLOBAL VARS
@@ -39,6 +41,11 @@ class ChurchSearchForm(forms.Form):
                                     label="Choose a State",
                                     widget=forms.Select(attrs={'class': 'form-select'}))
 
+    metroname_choices = mn.metroNames
+    metroNames = forms.ChoiceField(choices= metroname_choices,
+                                    label="Choose a Metro",
+                                    required=True,
+                                    widget=forms.Select(attrs={'class': 'form-select'}))
 
 ##
 def GetChurchesSummary():
@@ -119,9 +126,8 @@ def GetData_byState(searchQuery:str, subSearchQuery:str='0'):
                 raise Exception ("subSearchQuery is none")
 
             if (searchQuery != "" and int(subSearchQuery) != 0):
-                print("has subSearchQuery and subSearchQuery", subSearchQuery)
+                print(f"has state.searchQuery: {searchQuery} and subSearchQuery: {subSearchQuery}")
                 listData = State_dbQuery.stateSearch(dbCollection, subSearchQuery, searchQuery)
-                # print(listData)
             elif (searchQuery is not None and searchQuery != "all"):
                 print("searchQuery is not None or all", searchQuery)
                 listData = State_dbQuery.querySearch(dbCollection, searchQuery)
@@ -137,6 +143,51 @@ def GetData_byState(searchQuery:str, subSearchQuery:str='0'):
         return listData
 
 
+def GetData_byMetro(searchQuery:str, subSearchQuery:str='0'):
+    """
+    Function to get the date by State with search query
+
+    { byChurchOrg, likeTxtSearch }
+    - returns empty list, or a dbCollection
+    """
+    global theDB
+    listData = []
+
+    try:
+        theDB = DbClient.getDB()
+
+        if(theDB is not None):
+            dbCollection = theDB.by_metro
+
+            #checking for lack of param passed in
+            print("in here with subsSearchQuery", subSearchQuery)
+
+            # TODO: refactor this 'None' away from here???  INVESTIGATE...
+            if(subSearchQuery is None or subSearchQuery == ''):
+                raise Exception ("subSearchQuery is none")
+
+            ## has searchQuery and user selected a 'metro area'
+            if (searchQuery != "" and int(subSearchQuery) != 0):
+                print("has metro subSearchQuery", subSearchQuery)
+                print("has metro searchQuery", searchQuery)
+                listData = Metro_dbQuery.MetroSearch(dbCollection, subSearchQuery, searchQuery)
+
+            ## user has typed a searchquery in
+            elif (searchQuery is not None and searchQuery != "all"):
+                print("searchQuery is not None or all", searchQuery)
+                listData = Metro_dbQuery.querySearch(dbCollection, searchQuery)
+
+            ## searchQuery is "all", no metro selected
+            elif(searchQuery == "all"):
+                print('all by_metro')
+                listData = Metro_dbQuery.getAll(dbCollection)
+
+
+    except Exception as e:
+        print (f"Error in churches.GetData_byMetro()", e, file=sys.stderr)
+
+    finally:
+        return listData
 
 
 

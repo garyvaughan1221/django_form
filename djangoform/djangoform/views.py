@@ -3,6 +3,7 @@ from django.shortcuts import render, redirect
 from .forms import form1 as f
 from .forms import churches as c
 from .forms import state_names as sn
+from .forms import metro_names as mn
 import sys
 
 
@@ -63,28 +64,35 @@ def churches_view(request):
         if form.is_valid():
             request.session["post_flag"] = True
             request.session["form_data"] = form.cleaned_data
-            request.session["searchQuery"] = form.cleaned_data["searchQuery"]
             request.session["searchType"] = form.cleaned_data["searchType"]
+            request.session["searchQuery"] = form.cleaned_data["searchQuery"]
 
             print(f"searchType?:", request.session["searchType"])
 
 
-            # need to clear this out for switching between searchTypes...for the dropdown to reset
-            if(request.session["searchType"] == 'national'):
+            ## Need to clear this out for switching between searchTypes...for the dropdown to reset
+
+            # check & del or set 'selectedState' session var
+            if(request.session["searchType"] != 'by_state'):
                 if("selectedState" in request.session):
-                    print("\t\t###### deleting session var:", request.session["selectedState"])
                     del request.session["selectedState"]
                     form.cleaned_data["stateNames"] = '0'
-                else:
-                    print("NO SESSION VAR...")
             else:
                 request.session["selectedState"] = form.cleaned_data["stateNames"]
 
-
+            # check & del or set 'metroName' session var
+            if(request.session["searchType"] != 'by_metro'):
+                if('selectedMetro' in request.session):
+                    del request.session["selectedMetro"]
+                    form.cleaned_data["metroNames"] = '0'
+            else:
+                request.session["selectedMetro"] = form.cleaned_data["metroNames"]
+                print("else...")
 
 
             return redirect("/churches")
 
+        # return back to initial form, form was not valid()
         return render(request, 'churches.html', {'form': form})
 
     ## GET REQUESTS --->
@@ -110,19 +118,31 @@ def churches_view(request):
                 searchQuery = request.session["searchQuery"]
                 subSearchQuery = "0"
                 selectedState = subSearchQuery
+                selectedMetro = subSearchQuery
 
+
+                # checking selectedState stuff, if conditions met, it's a STATE search
                 if("selectedState" in request.session):
                     selectedState = request.session["selectedState"]
                     if(selectedState != '0'):
                         subSearchQuery = selectedState
 
+                # checking selectedMetro stuff, if conditions met, it's a METRO search
+                if("selectedMetro" in request.session):
+                    selectedMetro = request.session["selectedMetro"]
+                    if(selectedMetro != '0'):
+                        subSearchQuery = selectedMetro
+
+
+
                 form = c.ChurchSearchForm(initial=form_data)
                 context = { "form":form, "printOut":printOut }
 
-                # add them back to the context for the form
-                context["searchType"] = searchType
-                context["query"] = searchQuery
+
+                # add these vars back to the context for the form
                 searchResults = getSearchRegionData(searchType, searchQuery, page_number, PER_PAGE, subSearchQuery)
+                context["query"] = searchQuery
+                context["searchType"] = searchType
 
                 match searchType:
                     case 'national':
@@ -132,6 +152,11 @@ def churches_view(request):
                         context["stateData"] = searchResults
                         context["selectedState"] = selectedState
                         context["stateName"] = sn.getStateNamebyCode(subSearchQuery)
+
+                    case 'by_metro':
+                        context["metroData"] = searchResults
+                        context["selectedMetro"] = selectedMetro
+                        context["metroName"] = mn.getmetroNamebyCode(subSearchQuery)
 
                 print("------------>  END postFlag <-------------------")
 
@@ -155,9 +180,14 @@ def churches_view(request):
                         subSearchQuery = request.session["selectedState"]
                         context["selectedState"] = subSearchQuery
                         context["stateName"] = sn.getStateNamebyCode(subSearchQuery)
-                        # context["printOut"] = f"statname: {StateName}"
+                        context["printOut"] = f"metroName: { context['stateName']}"
                         # print(f"out: --> {sn.getStateNamebyCode(subSearchQuery)}")
 
+                    if('selectedMetro' in request.session):
+                        subSearchQuery = request.session["selectedMetro"]
+                        context["selectedMetro"] = subSearchQuery
+                        context["metroName"] = mn.getmetroNamebyCode(subSearchQuery)
+                        context["printOut"] = f"metroName: { context['metroName']}"
 
                     # now get the data
                     searchResults = getSearchRegionData(searchType, searchQuery, page_number, PER_PAGE, subSearchQuery)
@@ -167,6 +197,8 @@ def churches_view(request):
                             context["nationalData"] = searchResults
                         case 'by_state':
                             context["stateData"] = searchResults
+                        case 'by_metro':
+                            context["metroData"] = searchResults
 
                 else:
                     print("NO PAGE_NUMBER?????")
@@ -219,19 +251,18 @@ def getSearchRegionData(searchType, searchQuery, page_number, per_page, optional
         case 'national':
             print('\r\n is national query\r\n')
             result = c.GetNationalData(searchQuery)
-            if(result is not None):
-               return c.getPagedData(result, page_number, per_page)
 
         case 'by_state':
             print("\tviews.getSearchRegionData: by_state", optionalSubQuery)
             result = c.GetData_byState(searchQuery, optionalSubQuery)
-            if(result is not None):
-                return c.getPagedData(result, page_number, per_page)
 
         case 'by_metro':
-            print("\tby metro!")
-            return None
+            print("\tby metro!", optionalSubQuery)
+            result = c.GetData_byMetro(searchQuery, optionalSubQuery)
 
         case 'by_county':
             print("\tby county...")
             return None
+
+    # will return [] or some data...
+    return c.getPagedData(result, page_number, per_page)

@@ -176,6 +176,14 @@
                 </div>
             </div>
 
+            <div id="metroNamesWrapper">
+                <br />
+                <div class="field">
+                    <label for="metroNames">Select a metro</label>
+                    {{ form.metroNames }}
+                </div>
+            </div>
+
             <div class="field reset-link">
                 <a href="/churches?reset=true" class="link-danger link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover">reset the form</a>
             </div>
@@ -196,11 +204,18 @@
                 <td>{{ searchType }}</td>
             </tr>
 
-            {% if searchType != 'national' and stateName != 'select a state' %}
+            {% if searchType == 'by_state' and stateName != 'select a state' %}
             <tr class="classI">
                 <td>Your selected State:</td>
                 <td>{{ stateName  }}</td>
             </tr>
+            {% endif %}
+
+            {% if searchType == 'by_metro' and metroName != 'select a metro area' %}
+                <tr class="classI">
+                    <td>Your selected Metro Area:</td>
+                    <td>{{ metroName }}</td>
+                </tr>
             {% endif %}
         </table>
         {% endif %}
@@ -272,6 +287,15 @@
             {% include 'subtemplates/paginator.html' with paged_obj=stateData %}
         {% endif %}
 
+        {% if metroData is not None %}
+            {% if selectedMetro != '0' %}
+                {% include 'subtemplates/metrodata_filtered.html' %}
+            {% else %}
+                {% include 'subtemplates/metrodata_all.html' %}
+            {% endif %}
+
+            {% include 'subtemplates/paginator.html' with paged_obj=metroData %}
+        {% endif %}
 
     </div>
 
@@ -285,13 +309,18 @@
 
         const stateNamesWrapper = document.getElementById("stateNamesWrapper");
         if (searchType != "by_state") {
-            stateNamesWrapper.style.display = wrapDisplay;
+            stateNamesWrapper.style.display = 'none';
+        }
+
+        if(searchType != "by_metro") {
+            metroNamesWrapper.style.display = 'none';
         }
 
         const ddlSearchType = document.getElementById("id_searchType");
         ddlSearchType.addEventListener("change", function (event) {
             const selectedValue = event.target.value;
 
+            // BY STATE
             if(selectedValue == 'by_state') {
                 console.log("by state...")
                 wrapDisplay = '';
@@ -300,6 +329,15 @@
                 wrapDisplay = 'none';
             }
             stateNamesWrapper.style.display = wrapDisplay;
+
+            // BY METRO
+            if(selectedValue == 'by_metro') {
+                wrapDisplay = '';
+            }
+            else {
+                wrapDisplay = 'none';
+            }
+            metroNamesWrapper.style.display = wrapDisplay;
         });
     });
 </script>
