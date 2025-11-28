@@ -167,7 +167,7 @@ def GetData_byMetro(searchQuery:str, subSearchQuery:str='0'):
                 raise Exception ("subSearchQuery is none")
 
             ## has searchQuery and user selected a 'metro area'
-            if (searchQuery != "" and int(subSearchQuery) != 0):
+            if (searchQuery != "" and subSearchQuery != "0"):
                 print("has metro subSearchQuery", subSearchQuery)
                 print("has metro searchQuery", searchQuery)
                 listData = Metro_dbQuery.MetroSearch(dbCollection, subSearchQuery, searchQuery)

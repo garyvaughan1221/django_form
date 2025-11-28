@@ -82,16 +82,22 @@ class Metro_dbQuery():
       if(dbCollection is None):
         raise Exception ("No dbCollection for by_metro.metroSearch!")
 
-      metroCode = subSearchQuery
-      if(metroCode != "0" and searchQuery == "all"):
-        print("this is by_metro.MetroSearch.searchQuery.ALL", metroCode, searchQuery)
-        query = dbCollection.find({"CBSACode": metroCode}, cls.projection)
+      metroName = subSearchQuery
+      if(metroName != "0" and searchQuery == "all"):
+        print("this is by_metro.MetroSearch.searchQuery.ALL", metroName, searchQuery)
+        query = dbCollection.find({"MetroName": metroName}, cls.projection)
         query = query.sort([("MetroName", 1), ("GroupName", 1)])
         listData = list(query)
 
       elif(subSearchQuery != "0" and (searchQuery != "all" and searchQuery != "")):
-        print("this is by_metro.MetroSearch.searchQuery.-->\tSubSearchQuery", metroCode, searchQuery, subSearchQuery)
-        query = dbCollection.find({"CBSACode": metroCode, "GroupName": {"$regex": searchQuery, "$options": "i"}}, cls.projection)
+        print("this is by_metro.MetroSearch.searchQuery.-->\tSubSearchQuery", metroName, searchQuery, subSearchQuery)
+        query = dbCollection.find(
+          {
+            "MetroName": {"$regex": metroName, "$options": 'i'},
+            "GroupName": {"$regex": searchQuery, "$options": "i"}
+          },
+          cls.projection)
+
         query = query.sort([("MetroName", 1), ("GroupName", 1)])
         listData = list(query)
 

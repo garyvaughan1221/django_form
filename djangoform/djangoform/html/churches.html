@@ -89,10 +89,10 @@
             </tr>
             {% endif %}
 
-            {% if searchType == 'by_metro' and metroName != 'select a metro area' %}
+            {% if searchType == 'by_metro' and selectedMetro != 'select a metro area' %}
                 <tr class="classI">
                     <td>Your selected Metro Area:</td>
-                    <td>{{ metroName }}</td>
+                    <td>{{ selectedMetro }}</td>
                 </tr>
             {% endif %}
         </table>

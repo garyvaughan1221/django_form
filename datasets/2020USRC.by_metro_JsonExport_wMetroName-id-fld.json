@@ -1,6 +1,4 @@
-
-metroNames = (
-	( "0", "select a metro area" ),
+(
 	( "Aberdeen, SD Micro Area", "Aberdeen, SD Micro Area" ),
 	( "Aberdeen, WA Micro Area", "Aberdeen, WA Micro Area" ),
 	( "Abilene, TX Metro Area", "Abilene, TX Metro Area" ),
@@ -930,15 +928,3 @@ metroNames = (
 	( "Zanesville, OH Micro Area", "Zanesville, OH Micro Area" ),
 	( "Zapata, TX Micro Area", "Zapata, TX Micro Area" )
 )
-
-
-def getmetroNamebyCode(metroCode:str):
-  """
-  function used for getting the 'metro name' by the 'metro code'
-
-  param: metroCode(str)
-  """
-  metroList = list(metroNames)
-  labelIndex = 0
-  metroName = [metro for metro in metroList if metro[labelIndex] == metroCode]
-  return metroName[0][1]

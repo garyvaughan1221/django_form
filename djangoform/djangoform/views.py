@@ -87,7 +87,6 @@ def churches_view(request):
                     form.cleaned_data["metroNames"] = '0'
             else:
                 request.session["selectedMetro"] = form.cleaned_data["metroNames"]
-                print("else...")
 
 
             return redirect("/churches")
@@ -156,7 +155,6 @@ def churches_view(request):
                     case 'by_metro':
                         context["metroData"] = searchResults
                         context["selectedMetro"] = selectedMetro
-                        context["metroName"] = mn.getmetroNamebyCode(subSearchQuery)
 
                 print("------------>  END postFlag <-------------------")
 
@@ -184,7 +182,7 @@ def churches_view(request):
                     if('selectedMetro' in request.session):
                         subSearchQuery = request.session["selectedMetro"]
                         context["selectedMetro"] = subSearchQuery
-                        context["metroName"] = mn.getmetroNamebyCode(subSearchQuery)
+
 
                     # now get the data
                     searchResults = getSearchRegionData(searchType, searchQuery, page_number, PER_PAGE, subSearchQuery)
