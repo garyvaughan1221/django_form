@@ -180,14 +180,11 @@ def churches_view(request):
                         subSearchQuery = request.session["selectedState"]
                         context["selectedState"] = subSearchQuery
                         context["stateName"] = sn.getStateNamebyCode(subSearchQuery)
-                        context["printOut"] = f"metroName: { context['stateName']}"
-                        # print(f"out: --> {sn.getStateNamebyCode(subSearchQuery)}")
 
                     if('selectedMetro' in request.session):
                         subSearchQuery = request.session["selectedMetro"]
                         context["selectedMetro"] = subSearchQuery
                         context["metroName"] = mn.getmetroNamebyCode(subSearchQuery)
-                        context["printOut"] = f"metroName: { context['metroName']}"
 
                     # now get the data
                     searchResults = getSearchRegionData(searchType, searchQuery, page_number, PER_PAGE, subSearchQuery)
