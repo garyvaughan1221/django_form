@@ -180,6 +180,7 @@
 </div><!-- end wrapper-->
 
 
+
 <script>
     document.addEventListener("DOMContentLoaded", function () {
 
@@ -199,9 +200,7 @@
         const loaderImg = getElem("loader-container");
         if(loaderImg) {
             loaderImg.style.display = 'none';
-            console.log("have loader");
         }
-        else { console.log("fuck!"); }
 
 
         const stateNamesWrapper = getElem("stateNamesWrapper");
@@ -213,11 +212,12 @@
             metroNamesWrapper.style.display = 'none';
         }
 
-
         const submitBtn = getElem("submitBtn");
+        const searchFld = getElem("id_searchQuery");
         submitBtn.addEventListener("click", function (event) {
-            // const dElem = event.target;
-            loaderImg.style.display = '';
+            if(searchFld.value != '') {
+                loaderImg.style.display = '';
+            }
         });
 
 
@@ -227,7 +227,6 @@
 
             // BY STATE
             if(selectedValue == 'by_state') {
-                console.log("by state...")
                 wrapDisplay = '';
             }
             else {
