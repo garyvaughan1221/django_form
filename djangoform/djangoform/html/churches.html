@@ -1,4 +1,5 @@
 {% load humanize %}
+{% load static %}
 
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
     integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
@@ -6,132 +7,9 @@
     integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
     crossorigin="anonymous"></script>
 
-<style>
-    div.wrapper {
-        display: block;
+<link href="{% static '/css/churches.css' %}" rel="stylesheet" />
 
-        > div {
-            display: inline-block;
-            vertical-align: top;
-        }
-        div.col1 {
-            width: 300px;
-            margin-right: 50px;
-        }
-        div.col2 {
-            width: 50%;
-        }
-    }
-    div.field { margin-bottom: 15px; }
-    div.reset-link { text-align:right; }
-    div.error-div { color: red; margin-bottom: 37px; }
-    label {
-        display: block;
-        font-weight: bold;
-        margin-bottom: 3px;
-    }
-    form {
-        background-color: #f9f9f9;
-        border: 1px solid #ddd;
-        border-radius: 10px;
-        padding: 20px;
-        width: 300px;
-    }
-    input {
-        border-radius: 9px;
-        font-size: 16px;
-        margin: 10px 0;
-        padding: 8px;
-    }
-    input[type="submit"] {
-        background-color: #475c8a;
-        border: none;
-        color: white;
-        cursor: pointer;
-        padding: 10px 15px;
-
-        &:hover {
-            background-color: #3067dd;
-        }
-    }
-
-    table#queryHdr {
-        background-color: #ccc;
-        font-style: normal;
-
-        td:last-child{
-            color: blue;
-        }
-    }
-
-    table {
-        width: 100%;
-        padding: 3px;
-
-        td {
-            padding: 5px;
-            vertical-align: top;
-        }
-
-        tr.classI {
-            td {
-                /* background-color: #efe9e9; */
-                color: #0f0f10;
-                font-style: italic;
-                font-weight: normal;
-            }
-        }
-    }
-
-    table#summaryData {
-        td:first-child {
-            font-weight: bold;
-            /* white-space: nowrap; */
-        }
-        td:last-child {
-            color: rgb(22, 10, 75)
-        }
-    }
-
-    /* TODO: may need to change to a reusable ID */
-    table#dataTable {
-        td:first-child {
-            color: blue;
-        }
-        tr.hdrCols td {
-            background-color: #ecf5a7;
-            color: #000;
-            font-weight: bold;
-        }
-    }
-
-    table#dataTable {
-        td.hdr {
-            background-color: #777;
-            border-radius: 8px 8px 0 0;
-            color: #fff;
-            text-align: center;
-        }
-    }
-
-
-    p{
-        margin: 0 0 37px;
-    }
-
-    .output {
-        color: red;
-    }
-    small.indent { color: #777; margin-left: 15px; }
-    .greyed #id_searchQuery { color: #bbb; }
-    #dataTable td.pagedDataCount {
-        background-color: #2f426d;
-        color: #bbb !important;
-        font-size:small;
-        text-align:right;
-    }
-</style>
-
+{% include 'subtemplates/loader_img.html' %}
 
 {% if printOut != "None" %}
 <div class="output">
@@ -188,7 +66,7 @@
                 <a href="/churches?reset=true" class="link-danger link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover">reset the form</a>
             </div>
 
-            <input type = "submit" value = "Submit">
+            <input id="submitBtn" type = "submit" value = "Submit">
     </form>
     </div>
 
@@ -304,10 +182,29 @@
 
 <script>
     document.addEventListener("DOMContentLoaded", function () {
+
+        //helper func
+        getElem = function(elemID) {
+            const returnObj = document.getElementById(elemID);
+            if(returnObj) {
+                return returnObj;
+            } else { return null }
+        }
+
+
         const searchType = "{{ searchType }}";
         wrapDisplay = 'none';
 
-        const stateNamesWrapper = document.getElementById("stateNamesWrapper");
+        //hide loading graphic
+        const loaderImg = getElem("loader-container");
+        if(loaderImg) {
+            loaderImg.style.display = 'none';
+            console.log("have loader");
+        }
+        else { console.log("fuck!"); }
+
+
+        const stateNamesWrapper = getElem("stateNamesWrapper");
         if (searchType != "by_state") {
             stateNamesWrapper.style.display = 'none';
         }
@@ -316,7 +213,15 @@
             metroNamesWrapper.style.display = 'none';
         }
 
-        const ddlSearchType = document.getElementById("id_searchType");
+
+        const submitBtn = getElem("submitBtn");
+        submitBtn.addEventListener("click", function (event) {
+            // const dElem = event.target;
+            loaderImg.style.display = '';
+        });
+
+
+        const ddlSearchType = getElem("id_searchType");
         ddlSearchType.addEventListener("change", function (event) {
             const selectedValue = event.target.value;
 

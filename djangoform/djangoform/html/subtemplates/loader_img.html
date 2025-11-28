@@ -1,0 +1,45 @@
+{% load static %}
+
+<style>
+  #loader-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color:rgba(211, 224, 243, 0.25);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+  }
+
+  #loader-container img {
+    width: 64px;
+    height: 64px;
+  }
+
+  #spinner {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: radial-gradient(farthest-side, #474bff 94%, #0000) top/9px 9px no-repeat,
+      conic-gradient(#0000 30%, #474bff);
+    -webkit-mask: radial-gradient(farthest-side, #0000 calc(100% - 9px), #000 0);
+    animation: spinner-c7wet2 1s infinite linear;
+  }
+
+  @keyframes spinner-c7wet2 {
+    100% {
+      transform: rotate(1turn);
+    }
+  }
+</style>
+
+
+
+
+<div id="loader-container">
+  <!-- <img src="{% static '/img/loader_img.png' %}" alt="Loading..." /> -->
+  <div id="spinner"></div>
+</div>
