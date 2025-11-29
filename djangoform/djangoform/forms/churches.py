@@ -7,6 +7,7 @@ from djangoform.api.by_metro import Metro_dbQuery
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from djangoform.forms import state_names as sn
 from djangoform.forms import metro_names as mn
+from djangoform.forms import county_names as cn
 
 
 ## GLOBAL VARS
@@ -45,6 +46,11 @@ class ChurchSearchForm(forms.Form):
     metroNames = forms.ChoiceField(choices= metroname_choices,
                                     label="Choose a Metro",
                                     required=True,
+                                    widget=forms.Select(attrs={'class': 'form-select'}))
+
+    countyname_choices = cn.countyNames
+    countyNames = forms.ChoiceField(choices= countyname_choices,
+                                    label="Choose a County",
                                     widget=forms.Select(attrs={'class': 'form-select'}))
 
 ##

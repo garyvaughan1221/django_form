@@ -118,6 +118,7 @@ def churches_view(request):
                 subSearchQuery = "0"
                 selectedState = subSearchQuery
                 selectedMetro = subSearchQuery
+                selectedCounty = subSearchQuery
 
 
                 # checking selectedState stuff, if conditions met, it's a STATE search
@@ -131,6 +132,8 @@ def churches_view(request):
                     selectedMetro = request.session["selectedMetro"]
                     if(selectedMetro != '0'):
                         subSearchQuery = selectedMetro
+
+                # if()
 
 
 

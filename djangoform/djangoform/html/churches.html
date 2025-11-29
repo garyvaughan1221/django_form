@@ -57,8 +57,16 @@
             <div id="metroNamesWrapper">
                 <br />
                 <div class="field">
-                    <label for="metroNames">Select a metro</label>
+                    <label for="metroNames">Select a metro area</label>
                     {{ form.metroNames }}
+                </div>
+            </div>
+
+            <div id="countyNamesWrapper">
+                <br />
+                <div class="field">
+                    <label for="countyNames">Select a county</label>
+                    {{ form.countyNames }}
                 </div>
             </div>
 
@@ -82,7 +90,7 @@
                 <td>{{ searchType }}</td>
             </tr>
 
-            {% if searchType == 'by_state' and stateName != 'select a state' %}
+            {% if searchType == 'by_state' or searchType == 'by_county' and stateName != 'select a state' %}
             <tr class="classI">
                 <td>Your selected State:</td>
                 <td>{{ stateName  }}</td>
@@ -95,54 +103,21 @@
                     <td>{{ selectedMetro }}</td>
                 </tr>
             {% endif %}
+
+            {% if searchType == 'by_county' and selectedCounty != 'select a county' %}
+                <tr class="classI">
+                    <td>Your selected County:</td>
+                    <td>{{ selectedCounty }}</td>
+                </tr>
+            {% endif %}
+
+
         </table>
         {% endif %}
 
 
         {% if summaryData is not None %}
-        <table class="table" id="dataTable">
-            <th scope="col">
-                <tr>
-                    <td colspan="2" class="hdr">2020 statistical data on US Church Organizations</td>
-                </tr>
-            </th>
-            <tr>
-                <td>
-                    Population 2020:
-                </td>
-                <td>
-                    {{ summaryData.Population_2020|intcomma }}
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    # of Congregations:
-                </td>
-                <td>
-                    {{ summaryData.Congregations|intcomma }}
-                </td>
-            </tr>
-            <tr>
-                <td>Congregations per 1000 population:</td>
-                <td>{{ summaryData.Congregations_per_1000_population }}</td>
-            </tr>
-            <tr>
-                <td>
-                    # of Adherents:
-                </td>
-                <td>
-                    {{ summaryData.Adherents|intcomma }}
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    Adherents % of population:
-                </td>
-                <td>
-                    {{ summaryData.Adherents_percent_of_Population }}%
-                </td>
-            </tr>
-        </table>
+            {% include 'subtemplates/summarydata.html' %}
         {% endif %}
 
         {% if nationalData is not None %}
@@ -191,6 +166,12 @@
                 return returnObj;
             } else { return null }
         }
+        hideElem = function(dElem, isHide=true) {
+            if(dElem) {
+                visibility = (isHide == true? 'none' : '');
+                dElem.style.display = visibility;
+            }
+        }
 
 
         const searchType = "{{ searchType }}";
@@ -198,25 +179,31 @@
 
         //hide loading graphic
         const loaderImg = getElem("loader-container");
-        if(loaderImg) {
-            loaderImg.style.display = 'none';
-        }
+        if(loaderImg) { hideElem(loaderImg); }
 
 
         const stateNamesWrapper = getElem("stateNamesWrapper");
-        if (searchType != "by_state") {
-            stateNamesWrapper.style.display = 'none';
+        if (searchType != "by_state" && searchType != "by_county" ) {
+            hideElem(stateNamesWrapper);
         }
 
+        const metroNamesWrapper = getElem("metroNamesWrapper");
         if(searchType != "by_metro") {
-            metroNamesWrapper.style.display = 'none';
+            hideElem(metroNamesWrapper);
         }
 
+        const countyNamesWrapper = getElem("countyNamesWrapper");
+        if(searchType != 'by_county') {
+            hideElem(countyNamesWrapper);
+        }
+
+
+        // cannot submit form with empty search field, otherwise show loader img
         const submitBtn = getElem("submitBtn");
         const searchFld = getElem("id_searchQuery");
         submitBtn.addEventListener("click", function (event) {
             if(searchFld.value != '') {
-                loaderImg.style.display = '';
+                hideElem(loaderImg, false);
             }
         });
 
@@ -226,22 +213,16 @@
             const selectedValue = event.target.value;
 
             // BY STATE
-            if(selectedValue == 'by_state') {
-                wrapDisplay = '';
-            }
-            else {
-                wrapDisplay = 'none';
-            }
+            wrapDisplay = (selectedValue == 'by_state' || selectedValue == 'by_county'? '': 'none');
             stateNamesWrapper.style.display = wrapDisplay;
 
             // BY METRO
-            if(selectedValue == 'by_metro') {
-                wrapDisplay = '';
-            }
-            else {
-                wrapDisplay = 'none';
-            }
+            wrapDisplay = (selectedValue == 'by_metro'? '' : 'none');
             metroNamesWrapper.style.display = wrapDisplay;
+
+            // BY COUNTY
+            wrapDisplay = (selectedValue == 'by_county'? '' : 'none');
+            countyNamesWrapper.style.display = wrapDisplay;
         });
     });
 </script>

@@ -1,0 +1,45 @@
+{% load humanize %}
+
+<table class="table" id="dataTable">
+  <th scope="col">
+    <tr>
+      <td colspan="2" class="hdr">2020 statistical data on US Church Organizations</td>
+    </tr>
+  </th>
+  <tr>
+    <td>
+      Population 2020:
+    </td>
+    <td>
+      {{ summaryData.Population_2020|intcomma }}
+    </td>
+  </tr>
+  <tr>
+    <td>
+      # of Congregations:
+    </td>
+    <td>
+      {{ summaryData.Congregations|intcomma }}
+    </td>
+  </tr>
+  <tr>
+    <td>Congregations per 1000 population:</td>
+    <td>{{ summaryData.Congregations_per_1000_population }}</td>
+  </tr>
+  <tr>
+    <td>
+      # of Adherents:
+    </td>
+    <td>
+      {{ summaryData.Adherents|intcomma }}
+    </td>
+  </tr>
+  <tr>
+    <td>
+      Adherents % of population:
+    </td>
+    <td>
+      {{ summaryData.Adherents_percent_of_Population }}%
+    </td>
+  </tr>
+</table>
