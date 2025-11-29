@@ -2,19 +2,21 @@
 
 <table class="table" id="dataTable">
   <tr>
-    <td colspan="6" class="hdr">2020 US Church Organizations by State</td>
+    <td colspan="7" class="hdr">2020 US Church Organizations by State > County</td>
   </tr>
   <tr class="hdrCols">
     <td>State</td>
+    <td>County</td>
     <td>Group</td>
     <td>Congregations</td>
     <td>Adherents</td>
     <td>% of Adherents per Adherents</td>
     <td># of Adherents per US population</td>
   </tr>
-  {% for churchGroup in stateData %}
+  {% for churchGroup in metroData %}
   <tr>
     <td>{{ churchGroup.StateName }}</td>
+    <td>{{ churchGroup.CountyName }}</td>
     <td>{{ churchGroup.GroupName }}</td>
     <td>{{ churchGroup.Congregations|intcomma }}</td>
     <td>{{ churchGroup.Adherents|intcomma }}</td>
@@ -24,8 +26,8 @@
   {% endfor %}
 
   <tr class="pagerCountRow">
-    <td colspan="6" class="pagedDataCount">
-      {{ stateData }}
+    <td colspan="7" class="pagedDataCount">
+      {{ countyData }}
     </td>
   </tr>
 </table>
