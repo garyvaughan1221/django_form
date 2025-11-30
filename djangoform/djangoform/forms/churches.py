@@ -24,7 +24,7 @@ class ChurchSearchForm(forms.Form):
     searchQuery = forms.CharField(
         strip=True,
         max_length=20,
-        initial="all",
+        initial="",
         widget=forms.TextInput(attrs={'class': 'form-control'}) )
 
     ddlOptions = (

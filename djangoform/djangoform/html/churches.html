@@ -1,6 +1,7 @@
 {% load humanize %}
 {% load static %}
 
+<link rel="icon" type="image/png" href="{% static 'img/favicon.ico' %}">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
     integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
@@ -19,10 +20,15 @@
 
 <div class="wrapper">
     <div class="col1">
-        <form action = "" method = "post">
+        <form action="" method="post" id="churchesSearchForm">
             {% csrf_token %}
+
+            <div id="requiredMsg">
+                <small>* denotes a required field!</small>
+            </div>
+
             <div class="field">
-                <label for="id_searchQuery">Search for a Church:</label>
+                <label for="id_searchQuery" class="required">Search for a Church:</label>
                 <small class="indent"><i>type "all" to get all data</small></i>
 
                 {% if query is not None %}
@@ -35,29 +41,33 @@
                     </span>
                 {% endif %}
 
-                {% if form.searchQuery.errors %}
-                    <div class="error-div">{{ form.searchQuery.errors.as_text }}</p>
-                {% endif %}
+                <div class="error-div" id="searchQueryErr">Please enter a search query!</div>
             </div>
 
             <br />
             <div class="field">
-                <label for="searchType">Select a search region</label>
+                <label>Select a search region</label>
                 {{ form.searchType }}
             </div>
 
             <div id="stateNamesWrapper">
                 <br />
                 <div class="field">
-                    <label for="stateNames">Select a state</label>
+                    {% if searchType == 'by_county' %}
+                        <label id="lblStateNames" class="required">Select a state</label>
+                    {% else %}
+                        <label id="lblStateNames">Select a state</label>
+                    {% endif %}
                     {{ form.stateNames }}
                 </div>
+
+                <div class="error-div" id="stateNamesErr">Please select state first!</div>
             </div>
 
             <div id="metroNamesWrapper">
                 <br />
                 <div class="field">
-                    <label for="metroNames">Select a metro area</label>
+                    <label>Select a metro area</label>
                     {{ form.metroNames }}
                 </div>
             </div>
@@ -65,7 +75,7 @@
             <div id="countyNamesWrapper">
                 <br />
                 <div class="field">
-                    <label for="countyNames">Select a county</label>
+                    <label>Select a county</label>
                     {{ form.countyNames }}
                 </div>
             </div>
@@ -74,7 +84,7 @@
                 <a href="/churches?reset=true" class="link-danger link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover">reset the form</a>
             </div>
 
-            <input id="submitBtn" type = "submit" value = "Submit">
+            <button id="submitBtn" type="button">Submit</button>
     </form>
     </div>
 
@@ -110,7 +120,6 @@
                     <td>{{ selectedCounty }}</td>
                 </tr>
             {% endif %}
-
 
         </table>
         {% endif %}
@@ -154,75 +163,5 @@
 
 </div><!-- end wrapper-->
 
+<script src="{% static '/js/churches.js' %}"></script>
 
-
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-
-        //helper func
-        getElem = function(elemID) {
-            const returnObj = document.getElementById(elemID);
-            if(returnObj) {
-                return returnObj;
-            } else { return null }
-        }
-        hideElem = function(dElem, isHide=true) {
-            if(dElem) {
-                visibility = (isHide == true? 'none' : '');
-                dElem.style.display = visibility;
-            }
-        }
-
-
-        const searchType = "{{ searchType }}";
-        wrapDisplay = 'none';
-
-        //hide loading graphic
-        const loaderImg = getElem("loader-container");
-        if(loaderImg) { hideElem(loaderImg); }
-
-
-        const stateNamesWrapper = getElem("stateNamesWrapper");
-        if (searchType != "by_state" && searchType != "by_county" ) {
-            hideElem(stateNamesWrapper);
-        }
-
-        const metroNamesWrapper = getElem("metroNamesWrapper");
-        if(searchType != "by_metro") {
-            hideElem(metroNamesWrapper);
-        }
-
-        const countyNamesWrapper = getElem("countyNamesWrapper");
-        if(searchType != 'by_county') {
-            hideElem(countyNamesWrapper);
-        }
-
-
-        // cannot submit form with empty search field, otherwise show loader img
-        const submitBtn = getElem("submitBtn");
-        const searchFld = getElem("id_searchQuery");
-        submitBtn.addEventListener("click", function (event) {
-            if(searchFld.value != '') {
-                hideElem(loaderImg, false);
-            }
-        });
-
-
-        const ddlSearchType = getElem("id_searchType");
-        ddlSearchType.addEventListener("change", function (event) {
-            const selectedValue = event.target.value;
-
-            // BY STATE
-            wrapDisplay = (selectedValue == 'by_state' || selectedValue == 'by_county'? '': 'none');
-            stateNamesWrapper.style.display = wrapDisplay;
-
-            // BY METRO
-            wrapDisplay = (selectedValue == 'by_metro'? '' : 'none');
-            metroNamesWrapper.style.display = wrapDisplay;
-
-            // BY COUNTY
-            wrapDisplay = (selectedValue == 'by_county'? '' : 'none');
-            countyNamesWrapper.style.display = wrapDisplay;
-        });
-    });
-</script>
