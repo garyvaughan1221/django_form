@@ -13,5 +13,6 @@ If you know python, it seems logical on how to run it.
 2. *type in terminal window:*  venv\Scripts\activate
 3. *type in terminal window:*  pip install django
 4. *cd djangoform*
-5. *type in terminal window:*  py manage.py runserver
+5. *type in terminal window:* py manage.py collectstatic
+6. *type in terminal window:*  py manage.py runserver
 7. There ain't no home page for base path, so navigate to this url: http://127.0.0.1:8000/form/
