@@ -1,14 +1,20 @@
 # If you prefer an async driver, use motor instead:
 # motor>=3.0.0
 ## do not use djongo <=1.37 (or at all) it will degrade django to django3.12
-pymongo==4.15.4
-asgiref==3.10.0
-Django==5.2.8
-django-filter==25.2
-django-mongodb-backend==5.2.2
-djangorestframework==3.16.1
-dnspython==2.8.0
-Markdown==3.10
-pytz==2025.2
-sqlparse==0.5.3
-tzdata==2025.2
+Package                Version
+---------------------- -----------
+asgiref                3.10.0
+Django                 5.2.8
+django-mongodb-backend 5.2.2
+dnspython              2.8.0
+numpy                  2.2.6
+pandas                 2.3.3
+pip                    21.2.3
+pymongo                4.15.4
+python-dateutil        2.9.0.post0
+pytz                   2025.2
+setuptools             57.4.0
+six                    1.17.0
+sqlparse               0.5.3
+typing_extensions      4.15.0
+tzdata                 2025.2
