@@ -4,6 +4,7 @@ from djangoform.api.db_client import DbClient
 from djangoform.api.national import National_dbQuery
 from djangoform.api.by_state import State_dbQuery
 from djangoform.api.by_metro import Metro_dbQuery
+from djangoform.api.by_county import County_dbQuery
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from djangoform.forms import state_names as sn
 from djangoform.forms import metro_names as mn
@@ -24,7 +25,7 @@ class ChurchSearchForm(forms.Form):
     searchQuery = forms.CharField(
         strip=True,
         max_length=20,
-        initial="",
+        initial="all",
         widget=forms.TextInput(attrs={'class': 'form-control'}) )
 
     ddlOptions = (
@@ -110,9 +111,10 @@ def GetNationalData(searchQuery:str):
 ##
 def GetData_byState(searchQuery:str, subSearchQuery:str='0'):
     """
-    Function to get the date by State with search query
+    Function to get the data by State with search query
 
-    { byChurchOrg, likeTxtSearch }
+    {subSearchQuery} param is the selected U.S. State
+
     - returns empty list, or a dbCollection
     """
     global theDB
@@ -151,9 +153,10 @@ def GetData_byState(searchQuery:str, subSearchQuery:str='0'):
 
 def GetData_byMetro(searchQuery:str, subSearchQuery:str='0'):
     """
-    Function to get the date by State with search query
+    Function to get the data by Metro area with search query
 
-    { byChurchOrg, likeTxtSearch }
+    {subSearchQuery} param is the selected Metro Area
+
     - returns empty list, or a dbCollection
     """
     global theDB
@@ -196,8 +199,33 @@ def GetData_byMetro(searchQuery:str, subSearchQuery:str='0'):
         return listData
 
 
+def GetData_byCounty(searchQuery:str, selectedState:str='0', selectedCounty:str="0"):
+    """
+    Function to get the data by State & County with search query
 
+    - returns empty list, or a dbCollection
+    """
+    global theDB
+    listData = []
 
+    try:
+        theDB = DbClient.getDB()
+        if(theDB is not None):
+            dbCollection = theDB.by_county
+
+            print(f"GetData_byCounty({searchQuery}, {selectedState}, {selectedCounty})")
+
+            if(selectedState == ''):
+                raise Exception (f"churches.GetData_byCounty({searchQuery}, {selectedState}, {selectedCounty}) -->>\t selectedState is blank for some reason")
+
+            ## get data
+            listData = County_dbQuery.getData(dbCollection, searchQuery, selectedState, selectedCounty)
+
+    except Exception as e:
+        print (f"Error in churches.GetData_byCounty({searchQuery}, {selectedState}, {selectedCounty})", e, file=sys.stderr)
+
+    finally:
+        return listData
 
 
 

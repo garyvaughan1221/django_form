@@ -114,7 +114,7 @@
                 </tr>
             {% endif %}
 
-            {% if searchType == 'by_county' and selectedCounty != 'select a county' %}
+            {% if searchType == 'by_county' and selectedCounty != '0' %}
                 <tr class="classI">
                     <td>Your selected County:</td>
                     <td>{{ selectedCounty }}</td>
@@ -129,6 +129,7 @@
             {% include 'subtemplates/summarydata.html' %}
         {% endif %}
 
+
         {% if nationalData is not None %}
             {% if query != "all" %}
                 {% include 'subtemplates/nationaldata_filtered.html' %}
@@ -138,6 +139,7 @@
 
             {% include 'subtemplates/paginator.html' with paged_obj=nationalData %}
         {% endif %}
+
 
         {% if stateData is not None %}
             {% if selectedState != '0' %}
@@ -149,6 +151,7 @@
             {% include 'subtemplates/paginator.html' with paged_obj=stateData %}
         {% endif %}
 
+
         {% if metroData is not None %}
             {% if selectedMetro != '0' %}
                 {% include 'subtemplates/metrodata_filtered.html' %}
@@ -157,6 +160,17 @@
             {% endif %}
 
             {% include 'subtemplates/paginator.html' with paged_obj=metroData %}
+        {% endif %}
+
+
+        {% if countyData is not None %}
+            {% if selectedCounty != '0' %}
+                {% include 'subtemplates/countydata_filtered.html' %}
+            {% else %}
+                {% include 'subtemplates/countydata_all.html' %}
+            {% endif %}
+
+            {% include 'subtemplates/paginator.html' with paged_obj=countyData %}
         {% endif %}
 
     </div>
