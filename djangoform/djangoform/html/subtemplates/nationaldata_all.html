@@ -21,10 +21,14 @@
       {{ churchGroup.GroupName }}
     </td>
     <td>
-      {{ churchGroup.Congregations|intcomma }}
+      {% if churchGroup.Congregations %}
+        {{ churchGroup.Congregations|intcomma }}
+      {% endif %}
     </td>
     <td>
-      {{ churchGroup.Adherents|intcomma }}
+      {% if churchGroup.Adherents %}
+        {{ churchGroup.Adherents|intcomma }}
+      {% endif %}
     </td>
   </tr>
   {% endfor %}

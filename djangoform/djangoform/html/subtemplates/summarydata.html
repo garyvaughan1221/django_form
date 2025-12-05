@@ -7,39 +7,42 @@
     </tr>
   </th>
   <tr>
-    <td>
-      Population 2020:
-    </td>
+    <td>Population 2020:</td>
     <td>
       {{ summaryData.Population_2020|intcomma }}
     </td>
   </tr>
   <tr>
+    <td># of Congregations:</td>
     <td>
-      # of Congregations:
-    </td>
-    <td>
-      {{ summaryData.Congregations|intcomma }}
+      {% if summaryData.Congregations %}
+        {{ summaryData.Congregations|intcomma }}
+      {% endif %}
+
     </td>
   </tr>
   <tr>
     <td>Congregations per 1000 population:</td>
-    <td>{{ summaryData.Congregations_per_1000_population }}</td>
-  </tr>
-  <tr>
     <td>
-      # of Adherents:
-    </td>
-    <td>
-      {{ summaryData.Adherents|intcomma }}
+      {% if summaryData.Congregations_per_1000_population %}
+        {{ summaryData.Congregations_per_1000_population }}
+      {% endif %}
     </td>
   </tr>
   <tr>
+    <td># of Adherents:</td>
     <td>
-      Adherents % of population:
+      {% if summaryData.Adherents %}
+        {{ summaryData.Adherents|intcomma }}
+      {% endif %}
     </td>
+  </tr>
+  <tr>
+    <td>Adherents % of population:</td>
     <td>
-      {{ summaryData.Adherents_percent_of_Population }}%
+      {% if summaryData.Adherents_percent_of_Population %}
+        {{ summaryData.Adherents_percent_of_Population }}%
+      {% endif %}
     </td>
   </tr>
 </table>

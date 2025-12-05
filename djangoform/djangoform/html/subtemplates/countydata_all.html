@@ -17,8 +17,16 @@
     <td>{{ churchGroup.StateName }}</td>
     <td>{{ churchGroup.CountyName }}</td>
     <td>{{ churchGroup.GroupName }}</td>
-    <td>{{ churchGroup.Congregations|intcomma }}</td>
-    <td>{{ churchGroup.Adherents|intcomma }}</td>
+    <td>
+      {% if churchGroup.Congregations %}
+        {{ churchGroup.Congregations|intcomma }}
+      {% endif %}
+    </td>
+    <td>
+      {% if churchGroup.Adherents %}
+        {{ churchGroup.Adherents|intcomma }}
+      {% endif %}
+    </td>
   </tr>
   {% endfor %}
 

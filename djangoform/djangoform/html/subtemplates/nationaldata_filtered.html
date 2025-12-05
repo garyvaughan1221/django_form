@@ -17,16 +17,24 @@
       {{ churchGroup.GroupName }}
     </td>
     <td>
-      {{ churchGroup.Congregations|intcomma }}
+      {% if churchGroup.Congregations %}
+        {{ churchGroup.Congregations|intcomma }}
+      {% endif %}
     </td>
     <td>
-      {{ churchGroup.Adherents|intcomma }}
+      {% if churchGroup.Adherents %}
+        {{ churchGroup.Adherents|intcomma }}
+      {% endif %}
     </td>
     <td>
-      {{ churchGroup.Adherents_percent_of_Total_Adherents }}%
+      {% if churchGroup.Adherents_percent_of_Total_Adherents %}
+        {{ churchGroup.Adherents_percent_of_Total_Adherents }}%
+      {% endif %}
     </td>
     <td>
-      {{ churchGroup.Adherents_percent_of_Population }}%
+      {% if churchGroup.Adherents_percent_of_Population %}
+        {{ churchGroup.Adherents_percent_of_Population }}%
+      {% endif %}
     </td>
   </tr>
   {% endfor %}
