@@ -19,10 +19,13 @@ document.addEventListener("DOMContentLoaded", function () {
   //first hide all error divs on page load
   searchQueryErr = getElem('searchQueryErr');
   stateNamesErr = getElem('stateNamesErr');
+  wrapDisplay = 'none';
+
+  const searchFld = getElem("id_searchQuery");
 
   //get selected searchType [ national, by_state, by_metro, by_county ]
-  const searchType = getElem('id_searchType').value;
-  wrapDisplay = 'none';
+  const ddlSearchType = getElem('id_searchType');
+  var searchType = getElem('id_searchType').value;
 
   //hide loading graphic
   const loaderImg = getElem("loader-container");
@@ -40,20 +43,35 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   const countyNamesWrapper = getElem("countyNamesWrapper");
-  if (searchType != 'by_county') {
+  if (searchType != "by_county") {
     hideElem(countyNamesWrapper);
   }
 
 
-  // cannot submit form with empty search field, otherwise show loader img
+  var ddlStateNames = getElem('id_stateNames');
+  var ddlCountyNames = getElem('id_countyNames');
+
+  if(searchType == "by_county") {//technically this shouldn't happen
+    if(ddlStateNames) {
+      if(ddlStateNames.selectedValue == '0') {
+        if(ddlCountyNames) {
+          ddlCountyNames.disabled = true;
+        }
+      }
+    } else {
+      console.error("No stateNames dropdown list?...");
+    }
+  }
+
+
+  //## SUBMIT BUTTON click event
   const submitBtn = getElem("submitBtn");
-  const searchFld = getElem("id_searchQuery");
   submitBtn.addEventListener("click", function (evt) {
     try {
       evt.preventDefault();
       var submitForm = true;
 
-      var ddlSearchType = getElem('id_searchType');
+      // values: national, by_state, by_metro, by_county
       if (ddlSearchType) {
         switch (ddlSearchType.value) {
           case 'by_county':
@@ -61,7 +79,7 @@ document.addEventListener("DOMContentLoaded", function () {
             var ddlStateNames = getElem('id_stateNames');
             if (ddlStateNames) {
               submitForm = (ddlStateNames.value == '0') ? false : true;
-              if(!submitForm) {
+              if (!submitForm) {
                 hideElem(stateNamesErr, 'block', false);
               }
             }
@@ -76,7 +94,10 @@ document.addEventListener("DOMContentLoaded", function () {
         submitForm = false;
       }
 
-      if (submitForm) { getElem('churchesSearchForm').submit(); }
+      if (submitForm) {
+        ddlCountyNames.disabled = false;
+        getElem('churchesSearchForm').submit();
+      }
       else {
         hideElem(loaderImg);
       }
@@ -85,25 +106,31 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   });
 
-  // change() event for searchType dropdown list
-  const ddlSearchType = getElem("id_searchType");
+  //## SEARCH TYPE change() event
   ddlSearchType.addEventListener("change", function (evt) {
     const selectedValue = evt.target.value;
     const lblStateNames = document.getElementById('lblStateNames');
 
     if(selectedValue == 'by_county') {
       lblStateNames.className = 'required';
+
+      //also checking for stateName, if not selected, disable countNames ddl
+      if(ddlStateNames) {
+        if(ddlStateNames.value = '0') {
+          if(ddlCountyNames) {
+            ddlCountyNames.options[0].text = 'pick a state first';
+            ddlCountyNames.disabled = true;
+          }
+        }
+      } else {alert("test") } //pass
     } else {
       lblStateNames.className = '';
     }
 
     // BY STATE
     wrapDisplay = (selectedValue == 'by_state' || selectedValue == 'by_county' ? '' : 'none');
-    const stateNames = getElem('id_stateNames');
-    stateNames.selectedIndex = 0; //reset to 'select a state' between flips of ddl
-
+    ddlStateNames.selectedIndex = 0; //reset to 'select a state' between flips of ddl
     stateNamesWrapper.style.display = wrapDisplay;
-
 
     // BY METRO
     wrapDisplay = (selectedValue == 'by_metro' ? '' : 'none');
@@ -113,4 +140,15 @@ document.addEventListener("DOMContentLoaded", function () {
     wrapDisplay = (selectedValue == 'by_county' ? '' : 'none');
     countyNamesWrapper.style.display = wrapDisplay;
   });
-});
+
+
+  ddlStateNames.addEventListener("change", function (evt) {
+    const selectedValue = evt.target.value;
+    searchType = ddlSearchType.value;
+    if(searchType == "by_county" && selectedValue != "0") {
+      ddlCountyNames.options[0].text = "click 'submit'";
+    }
+  });
+
+
+});//end DOMContentLoaded()

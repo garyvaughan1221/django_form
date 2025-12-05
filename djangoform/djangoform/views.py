@@ -182,7 +182,6 @@ def churches_view(request):
                         context["selectedCounty"] = selectedCounty
                         context["selectedState"] = selectedState
                         context["stateName"] = stateName
-                        context["printOut"] = searchResults
                         context["countyData"] = searchResults
 
                 print("------------>  END postFlag <-------------------")
@@ -215,7 +214,8 @@ def churches_view(request):
                     if('selectedCounty' in request.session):
                         selectedCounty = request.session["selectedCounty"]
                         context["selectedCounty"] = selectedCounty
-
+                    else:
+                        selectedCounty = "0"
 
                     # now get the data
                     searchResults = getSearchRegionData(searchType, searchQuery, page_number, PER_PAGE, subSearchQuery, selectedCounty)
@@ -232,7 +232,6 @@ def churches_view(request):
 
                 else:
                     form = c.ChurchSearchForm()
-                    # print(f"\t\tSUMMARY CLAUSE??: { post_flag }")
                     summaryData = getSummaryData()
                     if not summaryData:
                         #reset from list to None for frontEnd
