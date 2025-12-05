@@ -232,7 +232,7 @@ def churches_view(request):
 
                 else:
                     form = c.ChurchSearchForm()
-                    summaryData = getSummaryData()
+                    summaryData = c.GetChurchesSummary()
                     if not summaryData:
                         #reset from list to None for frontEnd
                         summaryData = None
@@ -246,25 +246,6 @@ def churches_view(request):
 
         finally:
             return render(request, "churches.html", context)
-
-
-
-
-
-def getSummaryData():
-    try:
-        #setup initial summary data query
-        listData = []
-        summary = c.GetChurchesSummary()
-        if(summary is not None):
-            listData = summary.find({})
-            listData = listData[0]
-
-    except Exception as e:
-        print (f"Error in views.churches_view: {e}", e, file=sys.stderr)
-
-    finally:
-        return listData
 
 
 

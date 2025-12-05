@@ -54,6 +54,10 @@ class ChurchSearchForm(forms.Form):
                                     label="Choose a County",
                                     widget=forms.Select(attrs={'class': 'form-select'}))
 
+    # def getCountyNames(self):
+    #     try:
+    #         theDB =
+
 ##
 def GetChurchesSummary():
     """
@@ -62,19 +66,20 @@ def GetChurchesSummary():
     returns: None or a dbCollection, so check for None in calling code
     """
     global theDB
-    dbCollection = None
 
     try:
+        listData = []
         theDB = DbClient.getDB()
-
         if(theDB is not None):
-            dbCollection = theDB.summary
+            summary = theDB.summary
+            listData = summary.find({})
+            listData = listData[0]
 
     except Exception as e:
-        print (f"Error connecting to MongoDB Collection: {dbCollection}", e, file=sys.stderr)
+        print (f"Error in churches.GetChurchesSummary()", e, file=sys.stderr)
 
     finally:
-        return dbCollection
+        return listData
 
 
 
