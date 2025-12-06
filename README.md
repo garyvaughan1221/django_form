@@ -40,6 +40,9 @@ The 'Metro Area Search', 'by_metro', code could've been better since it is a who
 ## Debugging
 I managed to get the launch.json working on my laptop for the debugger.  It should be in the .vsCode folder.  Hopefully it works for you.  I used the Python Debugger: Django (forms).
 
+## MY MongoDB Cluster
+This won't work for you.  It is whitelisted and there isn't any way around it.  Perhaps I'll try to put this on PythonAnywhere for fun.  You can get your own cluster and import the files via the 'Compass' desktop app.  Then setup a READ_ONLY user for your database and voila!
+
 
 
 
