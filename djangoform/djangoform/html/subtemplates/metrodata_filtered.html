@@ -16,10 +16,26 @@
   <tr>
     <td>{{ churchGroup.MetroName }}</td>
     <td>{{ churchGroup.GroupName }}</td>
-    <td>{{ churchGroup.Congregations|intcomma }}</td>
-    <td>{{ churchGroup.Adherents|intcomma }}</td>
-    <td>{{ churchGroup.Adherents_percent_of_Total_Adherents }}%</td>
-    <td>{{ churchGroup.Adherents_percent_of_Population }}%</td>
+    <td>
+      {% if churchGroup.Congregations %}
+      {{ churchGroup.Congregations|intcomma }}
+      {% endif %}
+    </td>
+    <td>
+      {% if churchGroup.Adherents %}
+      {{ churchGroup.Adherents|intcomma }}
+      {% endif %}
+    </td>
+    <td>
+      {% if churchGroup.Adherents_percent_of_Total_Adherents %}
+      {{ churchGroup.Adherents_percent_of_Total_Adherents }}%
+      {% endif %}
+    </td>
+    <td>
+      {% if churchGroup.Adherents_percent_of_Population %}
+      {{ churchGroup.Adherents_percent_of_Population }}%
+      {% endif %}
+    </td>
   </tr>
   {% endfor %}
 
