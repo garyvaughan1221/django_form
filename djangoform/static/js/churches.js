@@ -75,7 +75,6 @@ document.addEventListener("DOMContentLoaded", function () {
       if (ddlSearchType) {
         switch (ddlSearchType.value) {
           case 'by_county':
-            console.log('CASE by_county');
             var ddlStateNames = getElem('id_stateNames');
             if (ddlStateNames) {
               submitForm = (ddlStateNames.value == '0') ? false : true;
@@ -125,6 +124,7 @@ document.addEventListener("DOMContentLoaded", function () {
       } else {alert("test") } //pass
     } else {
       lblStateNames.className = '';
+      ddlCountyNames.selectedIndex = 0;
     }
 
     // BY STATE
@@ -145,8 +145,11 @@ document.addEventListener("DOMContentLoaded", function () {
   ddlStateNames.addEventListener("change", function (evt) {
     const selectedValue = evt.target.value;
     searchType = ddlSearchType.value;
-    if(searchType == "by_county" && selectedValue != "0") {
+    if (searchType == "by_county" && selectedValue != "0") {
+      //change countyNames:disabled label when state
       ddlCountyNames.options[0].text = "click 'submit'";
+      ddlCountyNames.selectedIndex = 0;
+      ddlCountyNames.disabled = true;
     }
   });
 

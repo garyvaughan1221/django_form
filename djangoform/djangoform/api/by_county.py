@@ -15,27 +15,41 @@ class County_dbQuery():
     '_id':0
   }
 
-  # @classmethod
-  # def getAll(cls, dbCollection):
-  #   """
-  #   class method to retrieve all data by Metro
-  #   """
-  #   listData = []
-  #   try:
-  #     if(dbCollection is not None):
-  #       query = dbCollection.find({}, cls.projection)
-  #       query = query.sort([("StateName", 1), ("CountyName", 1),("GroupName", 1)])
+  @classmethod
+  def getCountyNamesListForSelectedState(cls, dbCollection, searchQuery:str, selectedState:str):
+    """
+    class method to retrieve a list of county names for a selected state
+    """
+    countyListForState = []
+    try:
+      ## TODO: refactor this to a lookup table
 
-  #       #convert to dictionary object
-  #       listData = list(query)
+      if(dbCollection is not None):
+        query = dbCollection.aggregate(
+          [
+            { "$match": { "StateName": {"$regex": selectedState, "$options": 'i'} } },
+            { "$group": { "_id": '$CountyName' } },
+            { "$sort": { "_id": 1 } },
+            { "$project": { "CountyName": '$_id' } }
+          ]
+        )
 
-  #   except Exception as e:
-  #       print("Error with MongoDB in by_county.getAll({cls}, {dbCollection}):", e, file=sys.stderr)
-  #       sys.exit(2)
+      #convert to dictionary object
+      tempList = list(query)
 
-  #   finally:
-  #     # print(f"{listData}")
-  #     return listData
+      countyListForState = [
+        (obj['_id'], obj['CountyName'])
+        for obj in tempList
+      ]
+      countyListForState.insert(0, ("0", 'Choose a County'))
+
+
+    except Exception as e:
+      print(f"Error with MongoDB in by_county.getCountyNamesListForSelectedState({cls}, {dbCollection}, {searchQuery}, {selectedState}):", e, file=sys.stderr)
+      sys.exit(2)
+
+    finally:
+      return countyListForState
 
 
 
@@ -44,15 +58,7 @@ class County_dbQuery():
     """
     Class method to query the db using find params
 
-    *must pass in 3 params: { dbCollection, searchQuery, selectedState }
-
-    **optional param: {selectedCounty}
-
-      Example:
-        County_dbQuery.getData(dbCollection, searchQuery, subSearchQuery)
-
-        --> with 4th param:
-        County_dbQuery.getData(dbCollection, searchQuery, subSearchQuery, selectedCounty)
+    *Four required params: { dbCollection, searchQuery, selectedState, selectedCounty }
     """
 
     listData = []
@@ -105,6 +111,5 @@ class County_dbQuery():
         sys.exit(2)
 
     finally:
-      # print("listData", listData)
       return listData
 

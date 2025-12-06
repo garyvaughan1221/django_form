@@ -5,6 +5,7 @@ from .forms import churches as c
 from .forms import state_names as sn
 from .forms import metro_names as mn
 import sys
+from typing import Any, Dict
 
 
 
@@ -45,14 +46,17 @@ def form1_view(request):
     return render(request, "input_form.html", {"form1": form})
 
 
+
+
+
+
+
 def churches_view(request):
     """View used for html/churches.html template
 
     Handles POST and GET methods
     """
 
-    # this is for debugging
-    printOut = "None"
     PER_PAGE = 5
 
     if request.method == "POST":
@@ -60,6 +64,9 @@ def churches_view(request):
 
         # ---->  hopefully doesn't bug this <---------------
         request.session["post_flag"] = False
+
+        if("countyChoices" in request.session):
+            form.fields["countyNames"].choices = request.session["countyChoices"]
 
         if form.is_valid():
             request.session["post_flag"] = True
@@ -105,15 +112,16 @@ def churches_view(request):
 
 
             return redirect("/churches")
-
+        else:
+            print(f"\t--->\tForm is NOT valid\t<---\t")
 
         # return back to initial form, form was not valid()
         return render(request, 'churches.html', {'form': form})
 
     ## GET REQUESTS --->
     else:
-        context = {}
         searchQuery = ""
+        context: Dict[str, Any] = {}
 
         try:
             page_number = request.GET.get('page')
@@ -135,7 +143,10 @@ def churches_view(request):
                 selectedState = subSearchQuery
                 selectedMetro = subSearchQuery
                 selectedCounty = "0"
-                stateName = ""
+                stateName = ""  ## SHOULD THIS BE "0"?
+
+                form = c.ChurchSearchForm(initial=form_data)
+                context = { "form":form }
 
 
                 # checking selectedState stuff, if conditions met, it's a STATE search....or COUNTY search
@@ -145,8 +156,14 @@ def churches_view(request):
                         subSearchQuery = selectedState
                         stateName = sn.getStateNamebyCode(selectedState)
 
+                        if(searchType == 'by_county'):
+                            countyChoices = c.GetCountyNames(searchQuery, stateName)
+                            form.fields["countyNames"].choices = countyChoices
+                            request.session["countyChoices"] = countyChoices
+
                     if("selectedCounty" in request.session):
                         selectedCounty = request.session["selectedCounty"]
+
 
                 # checking selectedMetro stuff, if conditions met, it's a METRO search
                 if("selectedMetro" in request.session):
@@ -154,9 +171,6 @@ def churches_view(request):
                     if(selectedMetro != '0'):
                         subSearchQuery = selectedMetro
 
-
-                form = c.ChurchSearchForm(initial=form_data)
-                context = { "form":form, "printOut":printOut }
 
                 # add these vars back to the context for the form
                 context["query"] = searchQuery
@@ -207,6 +221,10 @@ def churches_view(request):
                         context["selectedState"] = subSearchQuery
                         context["stateName"] = sn.getStateNamebyCode(subSearchQuery)
 
+                        if(searchType == "by_county"):
+                            countyChoices = c.GetCountyNames(searchQuery, context["stateName"])
+                            form.fields["countyNames"].choices = countyChoices
+
                     if('selectedMetro' in request.session):
                         subSearchQuery = request.session["selectedMetro"]
                         context["selectedMetro"] = subSearchQuery
@@ -254,6 +272,8 @@ def getSearchRegionData(searchType, searchQuery, page_number, per_page, optional
     A helper function to get paged data by search region
 
         *shouldn't be any other values, it comes from a form...
+
+    returns: [] or list Data
     """
     match searchType:
         case 'national':

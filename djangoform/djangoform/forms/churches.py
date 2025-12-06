@@ -40,23 +40,20 @@ class ChurchSearchForm(forms.Form):
 
     statename_choices = sn.stateNames
     stateNames = forms.ChoiceField(choices=statename_choices,
-                                    label="Choose a State",
+                                    label="select a state",
                                     widget=forms.Select(attrs={'class': 'form-select'}))
 
     metroname_choices = mn.metroNames
     metroNames = forms.ChoiceField(choices= metroname_choices,
-                                    label="Choose a Metro",
+                                    label="select a metro",
                                     required=True,
                                     widget=forms.Select(attrs={'class': 'form-select'}))
 
-    countyname_choices = cn.countyNames
-    countyNames = forms.ChoiceField(choices= countyname_choices,
-                                    label="Choose a County",
-                                    widget=forms.Select(attrs={'class': 'form-select'}))
+    countyNames = forms.ChoiceField(
+        choices= [( "0", "select a county")],
+        label="Select a County",
+        widget=forms.Select(attrs={'class': 'form-select'}))
 
-    # def getCountyNames(self):
-    #     try:
-    #         theDB =
 
 ##
 def GetChurchesSummary():
@@ -65,7 +62,6 @@ def GetChurchesSummary():
 
     returns: None or a dbCollection, so check for None in calling code
     """
-    global theDB
 
     try:
         listData = []
@@ -91,10 +87,9 @@ def GetNationalData(searchQuery:str):
     { byChurchOrg, likeTxtSearch }
     - returns empty list, or a dbCollection
     """
-    global theDB
-    listData = []
 
     try:
+        listData = []
         theDB = DbClient.getDB()
 
         if(theDB is not None):
@@ -122,10 +117,9 @@ def GetData_byState(searchQuery:str, subSearchQuery:str='0'):
 
     - returns empty list, or a dbCollection
     """
-    global theDB
-    listData = []
 
     try:
+        listData = []
         theDB = DbClient.getDB()
 
         if(theDB is not None):
@@ -164,10 +158,10 @@ def GetData_byMetro(searchQuery:str, subSearchQuery:str='0'):
 
     - returns empty list, or a dbCollection
     """
-    global theDB
-    listData = []
+
 
     try:
+        listData = []
         theDB = DbClient.getDB()
 
         if(theDB is not None):
@@ -210,10 +204,9 @@ def GetData_byCounty(searchQuery:str, selectedState:str='0', selectedCounty:str=
 
     - returns empty list, or a dbCollection
     """
-    global theDB
-    listData = []
 
     try:
+        listData = []
         theDB = DbClient.getDB()
         if(theDB is not None):
             dbCollection = theDB.by_county
@@ -231,6 +224,29 @@ def GetData_byCounty(searchQuery:str, selectedState:str='0', selectedCounty:str=
 
     finally:
         return listData
+
+
+def GetCountyNames(searchQuery:str, selectedState:str):
+    """
+    Function to get County Names per selectedState
+
+    {param: type} searchQuery: str
+    {param: type} selectedState: str
+    """
+    selectedCounty = "0"
+    countyNames = []
+
+    try:
+        theDB = DbClient.getDB()
+        if(theDB is not None):
+            dbCollection = theDB.by_county
+            countyNames = County_dbQuery.getCountyNamesListForSelectedState(dbCollection, searchQuery, selectedState)
+
+    except Exception as e:
+        print(f"Error with MongoDB queries in chuches.getCountyNames({searchQuery}, {selectedState})", e, file=sys.stderr)
+        sys.exit(2)
+    finally:
+        return countyNames
 
 
 
