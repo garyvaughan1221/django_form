@@ -34,6 +34,9 @@ The data came from a spreadsheet I found online.  The files are in the /datasets
 
 I probably should've used PostGresSqL, but I didn't know the data well enough when I started the project so I went with MongoDB because I already had an account. Now, I see the relational data and some of the lookup tables I can make in PostGresSql when I migrate the app over to relational data and Django Models.  It wasn't that difficult to get the app working without models.  The hardest part was finding the right information in Google.  Phase Two or Three will be relational data; and the models are in the model folder...but they're useless now.  Maybe a base foundation for the PostGresSQL models???
 
+## by_metro && by_county Searches
+The 'Metro Area Search', 'by_metro', code could've been better since it is a whole list of metro areas that have to populate that dropdown.  However, I didn't care.  I don't care.  I could duplicate the code used (later) in 'by_county' search, but this is an example app and be fixed in the future with lookup tables and such.
+
 ## Debugging
 I managed to get the launch.json working on my laptop for the debugger.  It should be in the .vsCode folder.  Hopefully it works for you.  I used the Python Debugger: Django (forms).
 
