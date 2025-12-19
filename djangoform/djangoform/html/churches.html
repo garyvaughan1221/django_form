@@ -60,14 +60,6 @@
                 <div class="error-div" id="stateNamesErr">Please select state first!</div>
             </div>
 
-            <div id="metroNamesWrapper">
-                <br />
-                <div class="field">
-                    <label>Select a metro area</label>
-                    {{ form.metroNames }}
-                </div>
-            </div>
-
             <div id="countyNamesWrapper">
                 <br />
                 <div class="field">
@@ -101,13 +93,6 @@
                 <td>Your selected State:</td>
                 <td>{{ stateName  }}</td>
             </tr>
-            {% endif %}
-
-            {% if searchType == 'by_metro' and selectedMetro != 'select a metro area' %}
-                <tr class="classI">
-                    <td>Your selected Metro Area:</td>
-                    <td>{{ selectedMetro }}</td>
-                </tr>
             {% endif %}
 
             {% if searchType == 'by_county' and selectedCounty != '0' %}
@@ -145,17 +130,6 @@
             {% endif %}
 
             {% include 'subtemplates/paginator.html' with paged_obj=stateData %}
-        {% endif %}
-
-
-        {% if metroData is not None %}
-            {% if selectedMetro != '0' %}
-                {% include 'subtemplates/metrodata_filtered.html' %}
-            {% else %}
-                {% include 'subtemplates/metrodata_all.html' %}
-            {% endif %}
-
-            {% include 'subtemplates/paginator.html' with paged_obj=metroData %}
         {% endif %}
 
 

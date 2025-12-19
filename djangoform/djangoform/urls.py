@@ -13,14 +13,12 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-from django.contrib import admin
-from django.urls import path, include
-from djangoform.views import form1_view
+# from django.contrib import admin
+from django.urls import path
 from djangoform.views import churches_view
 
 urlpatterns = [
     # path("api-auth/", include("rest_framework.urls", namespace="rest_framework")),
-    # path('admin/', admin.site.urls),
-    path('form1/', form1_view, name='input_form'),
+    # path('admin/', admin.site.urls),name='input_form'),
     path('churches/', churches_view, name='churches')
 ]
