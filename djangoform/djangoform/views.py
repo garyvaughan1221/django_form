@@ -1,4 +1,3 @@
-from datetime import date
 from django.shortcuts import render, redirect
 from .forms import churches as c
 import sys
@@ -55,6 +54,9 @@ def churches_view(request):
                     del request.session["selectedCounty"]
                     form.cleaned_data["countyNames"] = "0"
 
+
+
+
             return redirect("/churches")
         else:
             print(f"\t--->\tForm is NOT valid\t<---\t")
@@ -97,12 +99,11 @@ def churches_view(request):
                     selectedState = request.session["selectedState"]
                     if(selectedState != '0'):
                         subSearchQuery = selectedState
-                        stateName = sn.getStateNamebyCode(selectedState)
 
-                        if(searchType == 'by_county'):
-                            countyChoices = c.GetCountyNames(searchQuery, stateName)
-                            form.fields["countyNames"].choices = countyChoices
-                            request.session["countyChoices"] = countyChoices
+                        # if(searchType == 'by_county'):
+                        #     countyChoices = c.GetCountyNames(searchQuery, stateName)
+                        #     form.fields["countyNames"].choices = countyChoices
+                        #     request.session["countyChoices"] = countyChoices
 
                     if("selectedCounty" in request.session):
                         selectedCounty = request.session["selectedCounty"]
@@ -120,13 +121,11 @@ def churches_view(request):
                     case 'by_state':
                         context["stateData"] = searchResults
                         context["selectedState"] = selectedState
-                        context["stateName"] = stateName
 
                     case 'by_county':
                         print("by_county")
                         context["selectedCounty"] = selectedCounty
                         context["selectedState"] = selectedState
-                        context["stateName"] = stateName
                         context["countyData"] = searchResults
 
                 print("------------>  END postFlag <-------------------")
@@ -150,11 +149,10 @@ def churches_view(request):
                     if('selectedState' in request.session):
                         subSearchQuery = request.session["selectedState"]
                         context["selectedState"] = subSearchQuery
-                        context["stateName"] = sn.getStateNamebyCode(subSearchQuery)
 
-                        if(searchType == "by_county"):
-                            countyChoices = c.GetCountyNames(searchQuery, context["stateName"])
-                            form.fields["countyNames"].choices = countyChoices
+                        # if(searchType == "by_county"):
+                            # countyChoices = c.GetCountyNames(searchQuery, context["stateName"])
+                            # form.fields["countyNames"].choices = countyChoices
 
                     if('selectedCounty' in request.session):
                         selectedCounty = request.session["selectedCounty"]
@@ -212,8 +210,8 @@ def getSearchRegionData(searchType, searchQuery, page_number, per_page, optional
         case 'by_county':
             print(f"\tVIEWS.PY >> by county...[state] {optionalSubQuery}\t[county]: {optionalSelectedCounty}")
 
-            optionalSubQuery = sn.getStateNamebyCode(optionalSubQuery)
-            result = c.GetData_byCounty(searchQuery, optionalSubQuery, optionalSelectedCounty)
+            # optionalSubQuery = sn.getStateNamebyCode(optionalSubQuery)
+            # result = c.GetData_byCounty(searchQuery, optionalSubQuery, optionalSelectedCounty)
 
     # will return [] or some data...
     return c.getPagedData(result, page_number, per_page)

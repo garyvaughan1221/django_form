@@ -13,16 +13,16 @@
 
   {% for churchGroup in stateData %}
   <tr>
-    <td>{{ churchGroup.StateName }}</td>
-    <td>{{ churchGroup.GroupName }}</td>
+    <td>{{ churchGroup.statename }}</td>
+    <td>{{ churchGroup.groupname }}</td>
     <td>
-      {% if churchGroup.Congregations %}
-      {{ churchGroup.Congregations|intcomma }}
+      {% if churchGroup.congregations %}
+      {{ churchGroup.congregations|intcomma }}
       {% endif %}
     </td>
     <td>
-      {% if churchGroup.Adherents %}
-      {{ churchGroup.Adherents|intcomma }}
+      {% if churchGroup.adherents %}
+      {{ churchGroup.adherents|intcomma }}
       {% endif %}
     </td>
   </tr>

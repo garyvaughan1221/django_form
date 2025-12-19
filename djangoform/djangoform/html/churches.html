@@ -77,36 +77,7 @@
     </div>
 
     <div class="col2">
-        {% if query is not None %}
-        <table class="table" id="queryHdr">
-            <tr class="classI">
-                <td>Your search query:</td>
-                <td>{{ query }}</td>
-            </tr>
-            <tr class="classI">
-                <td>Your search type/region:</td>
-                <td>{{ searchType }}</td>
-            </tr>
-
-            {% if searchType == 'by_state' or searchType == 'by_county' and stateName != 'select a state' %}
-            <tr class="classI">
-                <td>Your selected State:</td>
-                <td>{{ stateName  }}</td>
-            </tr>
-            {% endif %}
-
-            {% if searchType == 'by_county' and selectedCounty != '0' %}
-                <tr class="classI">
-                    <td>Your selected County:</td>
-                    <td>{{ selectedCounty }}</td>
-                </tr>
-            {% endif %}
-
-        </table>
-        {% endif %}
-
-
-        {% if summaryData is not None %}
+       {% if summaryData is not None %}
             {% include 'subtemplates/summarydata.html' %}
         {% endif %}
 

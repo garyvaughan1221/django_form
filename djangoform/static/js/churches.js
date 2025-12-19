@@ -23,7 +23,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   const searchFld = getElem("id_searchQuery");
 
-  //get selected searchType [ national, by_state, by_metro, by_county ]
+  //get selected searchType [ national, by_state, by_county ]
   const ddlSearchType = getElem('id_searchType');
   var searchType = getElem('id_searchType').value;
 
@@ -35,11 +35,6 @@ document.addEventListener("DOMContentLoaded", function () {
   const stateNamesWrapper = getElem("stateNamesWrapper");
   if (searchType != "by_state" && searchType != "by_county") {
     hideElem(stateNamesWrapper);
-  }
-
-  const metroNamesWrapper = getElem("metroNamesWrapper");
-  if (searchType != "by_metro") {
-    hideElem(metroNamesWrapper);
   }
 
   const countyNamesWrapper = getElem("countyNamesWrapper");
@@ -71,7 +66,7 @@ document.addEventListener("DOMContentLoaded", function () {
       evt.preventDefault();
       var submitForm = true;
 
-      // values: national, by_state, by_metro, by_county
+      // values: national, by_state, by_county
       if (ddlSearchType) {
         switch (ddlSearchType.value) {
           case 'by_county':
@@ -131,10 +126,6 @@ document.addEventListener("DOMContentLoaded", function () {
     wrapDisplay = (selectedValue == 'by_state' || selectedValue == 'by_county' ? '' : 'none');
     ddlStateNames.selectedIndex = 0; //reset to 'select a state' between flips of ddl
     stateNamesWrapper.style.display = wrapDisplay;
-
-    // BY METRO
-    wrapDisplay = (selectedValue == 'by_metro' ? '' : 'none');
-    metroNamesWrapper.style.display = wrapDisplay;
 
     // BY COUNTY
     wrapDisplay = (selectedValue == 'by_county' ? '' : 'none');

@@ -1,11 +1,20 @@
 import sys
-from django import forms
 from django.db.models import Subquery, OuterRef
-from djangoform.api.db_client import DbClient
-from djangoform.models.postgres_models import National as National_dbQuery, ChurchOrgs
-from djangoform.api.by_state import State_dbQuery
-from djangoform.api.by_county import County_dbQuery
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+
+# custom code stuff
+from django import forms
+from djangoform.api.db_client import DbClient
+
+# models
+from djangoform.models.postgres_models import National as National_dbQuery, ChurchOrgs
+from djangoform.models.postgres_models import ByState as State_dbQuery
+from djangoform.models.postgres_models import ByCounty as County_dbQuery
+
+# for the dropdowns
+from djangoform.models.postgres_models import StateNames as StateNames
+from djangoform.models.postgres_models import CountyNames as CountyNames
+
 
 
 ## GLOBAL VARS
@@ -18,6 +27,22 @@ class ChurchSearchForm(forms.Form):
 
     Use in views.py or a views python/django file
     """
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        try:
+            # choices for dropdowns
+            Statechoices = [('0', 'Select a State')]
+            for state in StateNames.objects.all():
+                Statechoices.append((state.pk, str(state.statename)))
+            self.fields['stateNames'].choices = Statechoices
+
+            CountyChoices = [('0', 'Select a County')]
+            for county in CountyNames.objects.all():
+                CountyChoices.append((county.pk, str(county.countyname)))
+            self.fields['countyNames'].choices = CountyChoices
+        except Exception:
+            pass
 
     searchQuery = forms.CharField(
         strip=True,
@@ -34,10 +59,10 @@ class ChurchSearchForm(forms.Form):
                                    label="Choose an option",
                                    widget=forms.Select(attrs={'class': 'form-select'}))
 
-    # statename_choices = sn.stateNames
-    # stateNames = forms.ChoiceField(choices=statename_choices,
-    #                                 label="select a state",
-    #                                 widget=forms.Select(attrs={'class': 'form-select'}))
+    stateNames = forms.ChoiceField(
+        choices=[('0', 'Select a State')],
+        label="Select a State",
+        widget=forms.Select(attrs={'class': 'form-select'}))
 
     countyNames = forms.ChoiceField(
         choices= [( "0", "select a county")],
@@ -111,28 +136,23 @@ def GetData_byState(searchQuery:str, subSearchQuery:str='0'):
 
     try:
         listData = []
-        theDB = DbClient.getDB()
+        # theDB = DbClient.getDB()
 
-        if(theDB is not None):
-            dbCollection = theDB.by_state
+        # Subquery to get GroupName from ChurchOrgs using GroupCode
+        orgs_qs = ChurchOrgs.objects.filter(groupcode=OuterRef('groupcode')).values('groupname')[:1]
 
-            #checking for lack of param passed in
-            print("in here with subsSearchQuery", subSearchQuery)
+        # Subquery to get StateName from StateNames using StateCode
+        states_qs = StateNames.objects.filter(pk=OuterRef('statecode')).values('statename')[:1]
 
-            # TODO: refactor this 'None' away from here???  INVESTIGATE...
-            if(subSearchQuery is None or subSearchQuery == ''):
-                raise Exception ("subSearchQuery is none")
+        qs = State_dbQuery.objects.annotate(groupname=Subquery(orgs_qs), statename=Subquery(states_qs))
 
-            if (searchQuery != "" and int(subSearchQuery) != 0):
-                print(f"has state.searchQuery: {searchQuery} and subSearchQuery: {subSearchQuery}")
-                listData = State_dbQuery.stateSearch(dbCollection, subSearchQuery, searchQuery)
-            elif (searchQuery is not None and searchQuery != "all"):
-                print("searchQuery is not None or all", searchQuery)
-                listData = State_dbQuery.querySearch(dbCollection, searchQuery)
-            elif(searchQuery == "all"):
-                print('all by_state')
-                listData = State_dbQuery.getAll(dbCollection)
+        if searchQuery and searchQuery != "all":
+            qs = qs.filter(groupname__icontains=searchQuery)
 
+        if subSearchQuery and subSearchQuery != "0":
+            qs = qs.filter(statecode=subSearchQuery)
+
+        listData = list(qs.values())
 
     except Exception as e:
         print (f"Error in churches.GetData_byState()", e, file=sys.stderr)
@@ -150,17 +170,17 @@ def GetData_byCounty(searchQuery:str, selectedState:str='0', selectedCounty:str=
 
     try:
         listData = []
-        theDB = DbClient.getDB()
-        if(theDB is not None):
-            dbCollection = theDB.by_county
+        # theDB = DbClient.getDB()
+        # if(theDB is not None):
+        #     dbCollection = theDB.by_county
 
-            print(f"GetData_byCounty({searchQuery}, {selectedState}, {selectedCounty})")
+        #     print(f"GetData_byCounty({searchQuery}, {selectedState}, {selectedCounty})")
 
-            if(selectedState == ''):
-                raise Exception (f"churches.GetData_byCounty({searchQuery}, {selectedState}, {selectedCounty}) -->>\t selectedState is blank for some reason")
+        #     if(selectedState == ''):
+        #         raise Exception (f"churches.GetData_byCounty({searchQuery}, {selectedState}, {selectedCounty}) -->>\t selectedState is blank for some reason")
 
-            ## get data
-            listData = County_dbQuery.getData(dbCollection, searchQuery, selectedState, selectedCounty)
+        #     ## get data
+        #     listData = County_dbQuery.getData(dbCollection, searchQuery, selectedState, selectedCounty)
 
     except Exception as e:
         print (f"Error in churches.GetData_byCounty({searchQuery}, {selectedState}, {selectedCounty})", e, file=sys.stderr)
@@ -169,27 +189,6 @@ def GetData_byCounty(searchQuery:str, selectedState:str='0', selectedCounty:str=
         return listData
 
 
-def GetCountyNames(searchQuery:str, selectedState:str):
-    """
-    Function to get County Names per selectedState
-
-    {param: type} searchQuery: str
-    {param: type} selectedState: str
-    """
-    selectedCounty = "0"
-    countyNames = []
-
-    try:
-        theDB = DbClient.getDB()
-        if(theDB is not None):
-            dbCollection = theDB.by_county
-            countyNames = County_dbQuery.getCountyNamesListForSelectedState(dbCollection, searchQuery, selectedState)
-
-    except Exception as e:
-        print(f"Error with MongoDB queries in chuches.getCountyNames({searchQuery}, {selectedState})", e, file=sys.stderr)
-        sys.exit(2)
-    finally:
-        return countyNames
 
 
 
