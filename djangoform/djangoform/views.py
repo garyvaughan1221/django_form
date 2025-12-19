@@ -1,8 +1,6 @@
 from datetime import date
 from django.shortcuts import render, redirect
 from .forms import churches as c
-from .forms import state_names as sn
-from .forms import metro_names as mn
 import sys
 from typing import Any, Dict
 
@@ -57,17 +55,6 @@ def churches_view(request):
                     del request.session["selectedCounty"]
                     form.cleaned_data["countyNames"] = "0"
 
-
-            # check & del or set 'metroName' session var
-            if(searchType != 'by_metro'):
-                if("selectedMetro" in request.session):
-                    del request.session["selectedMetro"]
-                    form.cleaned_data["metroNames"] = "0"
-            else:
-                request.session["selectedMetro"] = form.cleaned_data["metroNames"]
-
-
-
             return redirect("/churches")
         else:
             print(f"\t--->\tForm is NOT valid\t<---\t")
@@ -98,7 +85,6 @@ def churches_view(request):
                 searchQuery = request.session["searchQuery"]
                 subSearchQuery = "0"
                 selectedState = subSearchQuery
-                selectedMetro = subSearchQuery
                 selectedCounty = "0"
                 stateName = ""  ## SHOULD THIS BE "0"?
 
@@ -121,14 +107,6 @@ def churches_view(request):
                     if("selectedCounty" in request.session):
                         selectedCounty = request.session["selectedCounty"]
 
-
-                # checking selectedMetro stuff, if conditions met, it's a METRO search
-                if("selectedMetro" in request.session):
-                    selectedMetro = request.session["selectedMetro"]
-                    if(selectedMetro != '0'):
-                        subSearchQuery = selectedMetro
-
-
                 # add these vars back to the context for the form
                 context["query"] = searchQuery
                 context["searchType"] = searchType
@@ -143,10 +121,6 @@ def churches_view(request):
                         context["stateData"] = searchResults
                         context["selectedState"] = selectedState
                         context["stateName"] = stateName
-
-                    case 'by_metro':
-                        context["metroData"] = searchResults
-                        context["selectedMetro"] = selectedMetro
 
                     case 'by_county':
                         print("by_county")
@@ -182,10 +156,6 @@ def churches_view(request):
                             countyChoices = c.GetCountyNames(searchQuery, context["stateName"])
                             form.fields["countyNames"].choices = countyChoices
 
-                    if('selectedMetro' in request.session):
-                        subSearchQuery = request.session["selectedMetro"]
-                        context["selectedMetro"] = subSearchQuery
-
                     if('selectedCounty' in request.session):
                         selectedCounty = request.session["selectedCounty"]
                         context["selectedCounty"] = selectedCounty
@@ -200,8 +170,6 @@ def churches_view(request):
                             context["nationalData"] = searchResults
                         case 'by_state':
                             context["stateData"] = searchResults
-                        case 'by_metro':
-                            context["metroData"] = searchResults
                         case 'by_county':
                             context["countyData"] = searchResults
 
@@ -240,10 +208,6 @@ def getSearchRegionData(searchType, searchQuery, page_number, per_page, optional
         case 'by_state':
             print("\tviews.getSearchRegionData: by_state", optionalSubQuery)
             result = c.GetData_byState(searchQuery, optionalSubQuery)
-
-        case 'by_metro':
-            print("\tby metro!", optionalSubQuery)
-            result = c.GetData_byMetro(searchQuery, optionalSubQuery)
 
         case 'by_county':
             print(f"\tVIEWS.PY >> by county...[state] {optionalSubQuery}\t[county]: {optionalSelectedCounty}")

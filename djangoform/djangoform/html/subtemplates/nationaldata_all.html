@@ -18,16 +18,17 @@
   {% for churchGroup in nationalData %}
   <tr>
     <td>
-      {{ churchGroup.GroupName }}
+      {{ churchGroup.groupname }}
+      <div>{{ churchGroup.groupcode }}</div>
     </td>
     <td>
-      {% if churchGroup.Congregations %}
-        {{ churchGroup.Congregations|intcomma }}
+      {% if churchGroup.congregations %}
+        {{ churchGroup.congregations|intcomma }}
       {% endif %}
     </td>
     <td>
-      {% if churchGroup.Adherents %}
-        {{ churchGroup.Adherents|intcomma }}
+      {% if churchGroup.adherents %}
+        {{ churchGroup.adherents|intcomma }}
       {% endif %}
     </td>
   </tr>

@@ -1,14 +1,11 @@
 import sys
 from django import forms
+from django.db.models import Subquery, OuterRef
 from djangoform.api.db_client import DbClient
-from djangoform.api.national import National_dbQuery
+from djangoform.models.postgres_models import National as National_dbQuery, ChurchOrgs
 from djangoform.api.by_state import State_dbQuery
-from djangoform.api.by_metro import Metro_dbQuery
 from djangoform.api.by_county import County_dbQuery
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from djangoform.forms import state_names as sn
-from djangoform.forms import metro_names as mn
-from djangoform.forms import county_names as cn
 
 
 ## GLOBAL VARS
@@ -31,23 +28,16 @@ class ChurchSearchForm(forms.Form):
     ddlOptions = (
         ('national', 'National'),
         ('by_state', 'By State'),
-        ('by_metro', 'By Metro'),
         ('by_county', 'By County')
     )
     searchType = forms.ChoiceField(choices=ddlOptions,
                                    label="Choose an option",
                                    widget=forms.Select(attrs={'class': 'form-select'}))
 
-    statename_choices = sn.stateNames
-    stateNames = forms.ChoiceField(choices=statename_choices,
-                                    label="select a state",
-                                    widget=forms.Select(attrs={'class': 'form-select'}))
-
-    metroname_choices = mn.metroNames
-    metroNames = forms.ChoiceField(choices= metroname_choices,
-                                    label="select a metro",
-                                    required=True,
-                                    widget=forms.Select(attrs={'class': 'form-select'}))
+    # statename_choices = sn.stateNames
+    # stateNames = forms.ChoiceField(choices=statename_choices,
+    #                                 label="select a state",
+    #                                 widget=forms.Select(attrs={'class': 'form-select'}))
 
     countyNames = forms.ChoiceField(
         choices= [( "0", "select a county")],
@@ -58,18 +48,19 @@ class ChurchSearchForm(forms.Form):
 ##
 def GetChurchesSummary():
     """
-    Get the Summary/Totals of Church Organizations in the US during year 2020
+        Function to get the Churches Summary data
 
-    returns: None or a dbCollection, so check for None in calling code
+        *hardcoded JSON.
     """
 
     try:
-        listData = []
-        theDB = DbClient.getDB()
-        if(theDB is not None):
-            summary = theDB.summary
-            listData = summary.find({})
-            listData = listData[0]
+        listData = {
+            "Congregations": 356642,
+            "Adherents": 161224088,
+            "Adherents_percent_of_Population": 48.64,
+            "Population_2020": 331449281,
+            "Congregations_per_1000_population": 107.6
+        }
 
     except Exception as e:
         print (f"Error in churches.GetChurchesSummary()", e, file=sys.stderr)
@@ -90,16 +81,16 @@ def GetNationalData(searchQuery:str):
 
     try:
         listData = []
-        theDB = DbClient.getDB()
 
-        if(theDB is not None):
-            dbCollection = theDB.national
+        # Subquery to get GroupName from ChurchOrgs using GroupCode
+        orgs_qs = ChurchOrgs.objects.filter(groupcode=OuterRef('groupcode')).values('groupname')[:1]
 
-            #checking for lack of param passed in
-            if(searchQuery == "all"):
-                listData = National_dbQuery.getAll(dbCollection)
-            elif (searchQuery is not None):
-                listData = National_dbQuery.querySearch(dbCollection, searchQuery)
+        qs = National_dbQuery.objects.annotate(groupname=Subquery(orgs_qs))
+
+        if searchQuery and searchQuery != "all":
+            qs = qs.filter(groupname__icontains=searchQuery)
+
+        listData = list(qs.values())
 
     except Exception as e:
         print (f"Error in churches.GetNationalData()", e, file=sys.stderr)
@@ -145,54 +136,6 @@ def GetData_byState(searchQuery:str, subSearchQuery:str='0'):
 
     except Exception as e:
         print (f"Error in churches.GetData_byState()", e, file=sys.stderr)
-
-    finally:
-        return listData
-
-
-def GetData_byMetro(searchQuery:str, subSearchQuery:str='0'):
-    """
-    Function to get the data by Metro area with search query
-
-    {subSearchQuery} param is the selected Metro Area
-
-    - returns empty list, or a dbCollection
-    """
-
-
-    try:
-        listData = []
-        theDB = DbClient.getDB()
-
-        if(theDB is not None):
-            dbCollection = theDB.by_metro
-
-            #checking for lack of param passed in
-            print("in here with subsSearchQuery", subSearchQuery)
-
-            # TODO: refactor this 'None' away from here???  INVESTIGATE...
-            if(subSearchQuery is None or subSearchQuery == ''):
-                raise Exception ("subSearchQuery is none")
-
-            ## has searchQuery and user selected a 'metro area'
-            if (searchQuery != "" and subSearchQuery != "0"):
-                print("has metro subSearchQuery", subSearchQuery)
-                print("has metro searchQuery", searchQuery)
-                listData = Metro_dbQuery.MetroSearch(dbCollection, subSearchQuery, searchQuery)
-
-            ## user has typed a searchquery in
-            elif (searchQuery is not None and searchQuery != "all"):
-                print("searchQuery is not None or all", searchQuery)
-                listData = Metro_dbQuery.querySearch(dbCollection, searchQuery)
-
-            ## searchQuery is "all", no metro selected
-            elif(searchQuery == "all"):
-                print('all by_metro')
-                listData = Metro_dbQuery.getAll(dbCollection)
-
-
-    except Exception as e:
-        print (f"Error in churches.GetData_byMetro()", e, file=sys.stderr)
 
     finally:
         return listData

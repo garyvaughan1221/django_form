@@ -14,26 +14,26 @@
   {% for churchGroup in nationalData %}
   <tr>
     <td>
-      {{ churchGroup.GroupName }}
+      {{ churchGroup.groupname }}
     </td>
     <td>
-      {% if churchGroup.Congregations %}
-        {{ churchGroup.Congregations|intcomma }}
+      {% if churchGroup.congregations %}
+        {{ churchGroup.congregations|intcomma }}
       {% endif %}
     </td>
     <td>
-      {% if churchGroup.Adherents %}
-        {{ churchGroup.Adherents|intcomma }}
+      {% if churchGroup.adherents %}
+        {{ churchGroup.adherents|intcomma }}
       {% endif %}
     </td>
     <td>
-      {% if churchGroup.Adherents_percent_of_Total_Adherents %}
-        {{ churchGroup.Adherents_percent_of_Total_Adherents }}%
+      {% if churchGroup.adherents_percent_of_total_adherents %}
+        {{ churchGroup.adherents_percent_of_total_adherents }}%
       {% endif %}
     </td>
     <td>
-      {% if churchGroup.Adherents_percent_of_Population %}
-        {{ churchGroup.Adherents_percent_of_Population }}%
+      {% if churchGroup.adherents_percent_of_population %}
+        {{ churchGroup.adherents_percent_of_population }}%
       {% endif %}
     </td>
   </tr>

@@ -81,26 +81,38 @@ WSGI_APPLICATION = 'djangoform.wsgi.application'
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
 
-## this user is readOnly and constrained to 2020USRC db
 # DATABASES = {
-#     "default": {
-#         "ENGINE": "django_mongodb_backend",
-#         "HOST": "mongodb+srv://pythonprojects.i22ru0h.mongodb.net/",
-#         "NAME": "2020USRC",
-#         "USER": "mongodb_readOnly",
-#         "PASSWORD": "dwg4TZoXgjCY30N6",
-#         "PORT": 27017,
-#         "OPTIONS": {
-#             "retryWrites": "true",
-#             "w": "majority",
-#         },
-#     },
+#     # Leave this empty to indicate no database is configured
 # }
+
+
+# Supabase Configuration
+# SUPABASE_URL = 'jnrebizzyxdvsdokryar.supabase.co'
+# SUPABASE_ANON_KEY = 'sb_publishable_e-E5MxKgrg8RymtCZfNs7g_R2Z-Qfaj'
+# SUPABASE_SERVICE_ROLE_KEY = 'YOUR_SERVICE_ROLE_KEY' # Use with caution, grants full access
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'postgres',
+#         'USER': 'postgres',
+#         'PASSWORD': '<needed>',
+#         'HOST': 'jnrebizzyxdvsdokryar.supabase.co',
+#         'PORT': '5432',
+#         # 'PORT': '6543',
+#     }
+# }
+
 DATABASES = {
-    # Leave this empty to indicate no database is configured
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'pythonProjects',
+        'USER': 'avnadmin',
+        'PASSWORD': '<use your own',
+        'HOST': 'teepeewun-gvaughan-project1.c.aivencloud.com',
+        'PORT': '22305'
+    }
 }
-
-
 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
