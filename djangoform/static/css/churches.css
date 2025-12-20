@@ -1,174 +1,204 @@
-    div.wrapper {
-      display: block;
+body {
+  /* background-color: #aaa; */
+  padding: 10px;
+}
 
-      >div {
-        display: inline-block;
-        vertical-align: top;
-      }
 
-      div.col1 {
-        width: 300px;
-        margin-right: 50px;
-      }
+div.wrapper {
+  display: block;
 
-      div.col2 {
-        width: 50%;
-      }
+  >div {
+    display: inline-block;
+    vertical-align: top;
+    padding-top: 10px;
+  }
+
+  div.col1 {
+    width: 300px;
+    margin-right: 50px;
+  }
+
+  div.col2 {
+    width: 50%;
+  }
+
+  div.field {
+    margin-bottom: 15px;
+  }
+
+  div.reset-link {
+    color: rgb(153 1 28) !important;
+    text-align: right;
+  }
+
+  div.error-div {
+    color: red;
+    margin-bottom: 7px;
+  }
+
+  .error-div::before {
+    content: url("/static/admin/img/icon-alert.svg");
+    filter: invert(50%) sepia(100%) saturate(10000%) hue-rotate(0deg);
+    padding-right: 5px;
+    vertical-align: middle;
+
+  }
+
+  #searchQueryErr,
+  #stateNamesErr {
+    display: none;
+  }
+
+  label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 3px;
+  }
+
+  form {
+    background-color: #d6d5ff;
+    border: 1px solid #999;
+    border-radius: 10px;
+    padding: 20px;
+    width: 300px;
+  }
+
+  input {
+    border-radius: 9px;
+    font-size: 16px;
+    margin: 10px 0;
+    padding: 8px;
+  }
+
+  #submitBtn {
+    background-color: #475c8a;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    color: white;
+    cursor: pointer;
+    padding: 10px 15px;
+
+    &:hover {
+      background-color: #3067dd;
     }
+  }
 
-    div.field {
-      margin-bottom: 15px;
+  table#queryHdr {
+    background-color: #ccc;
+    font-style: normal;
+
+    td:last-child {
+      color: blue;
     }
+  }
 
-    div.reset-link {
-      color: rgb(153 1 28) !important;
-      text-align: right;
-    }
+  table {
+    width: 100%;
+    padding: 3px;
 
-    div.error-div {
-      color: red;
-      margin-bottom: 7px;
-    }
-    .error-div::before {
-      content: url("/static/admin/img/icon-alert.svg");
-      filter: invert(50%) sepia(100%) saturate(10000%) hue-rotate(0deg);
-      padding-right: 5px;
-      vertical-align: middle;
-
-    }
-    #searchQueryErr, #stateNamesErr {
-      display: none;
-    }
-
-    label {
-      display: block;
-      font-weight: bold;
-      margin-bottom: 3px;
-    }
-
-    form {
-      background-color: #f9f9f9;
-      border: 1px solid #ddd;
-      border-radius: 10px;
-      padding: 20px;
-      width: 300px;
-    }
-
-    input {
-      border-radius: 9px;
-      font-size: 16px;
-      margin: 10px 0;
-      padding: 8px;
-    }
-
-    #submitBtn {
-      background-color: #475c8a;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-      color: white;
-      cursor: pointer;
-      padding: 10px 15px;
-
-      &:hover {
-        background-color: #3067dd;
-      }
-    }
-
-    table#queryHdr {
-      background-color: #ccc;
-      font-style: normal;
-
-      td:last-child {
-        color: blue;
-      }
-    }
-
-    table {
-      width: 100%;
-      padding: 3px;
-
+    tr.classI {
       td {
-        padding: 5px;
-        vertical-align: top;
-      }
-
-      tr.classI {
-        td {
-          /* background-color: #efe9e9; */
-          color: #0f0f10;
-          font-style: italic;
-          font-weight: normal;
-        }
+        /* background-color: #efe9e9; */
+        color: #0f0f10;
+        font-style: italic;
+        font-weight: normal;
       }
     }
 
-    table#summaryData {
-      td:first-child {
-        font-weight: bold;
-        /* white-space: nowrap; */
-      }
+    td {
+      padding: 5px 8px;
+      vertical-align: top;
+    }
+  }
 
-      td:last-child {
-        color: rgb(22, 10, 75)
-      }
+  #dataTable.summaryDataTbl {
+    td { padding: 12px 8px; }
+    tbody td:first-child {
+      background-color: #cac4ff;
+      color: #155d25;
     }
 
-    /* TODO: may need to change to a reusable ID */
-    table#dataTable {
-      td:first-child {
-        color: blue;
-      }
+    tr:last-child {
+      border-bottom: 1px solid #155d25;
+    }
+  }
 
-      tr.hdrCols td {
-        background-color: #ecf5a7;
-        color: #000;
-        font-weight: bold;
-      }
+  table#dataTable {
+    border-radius: 8px;
+
+    /* leave this here for the cascade */
+    td:first-child {
+      color: blue;
+    }
+    /* leave this here for the cascade */
+
+    tr.hdrCols td {
+      background-color: #65c77b;
+      color: #000;
+      font-weight: bold;
     }
 
-    table#dataTable {
-      td.hdr {
-        background-color: #777;
-        border-radius: 8px 8px 0 0;
-        color: #fff;
-        text-align: center;
-      }
+    td.hdr {
+      background-color: #777;
+      border-radius: 8px 8px 0 0;
+      color: #fff;
+      text-align: center;
     }
+    td.hdr-lite{
+      background-color: #fff;
+      color: #333;
+      font-weight: bold;
+      text-align: center;
+      border-width: 1px 0 1px;
+      border-color: #65c77b;
+
+    }
+  }
 
 
-    p {
-      margin: 0 0 37px;
-    }
+  p {
+    margin: 0 0 37px;
+  }
 
-    .output {
-      color: red;
-    }
+  .output {
+    color: red;
+  }
 
-    small.indent {
-      color: #777;
-      margin-left: 15px;
-    }
+  small.indent {
+    color: #777;
+    margin-left: 15px;
+  }
 
-    /* Style for a label of a required input */
-    .required::after {
-      content: "*";
-      color: red;
-      margin-left: 4px;
-    }
-    #requiredMsg {
-      color: red;
-      font-style: italic;
-      margin-bottom: 10px;
-      text-align: right;
-    }
+  /* Style for a label of a required input */
+  .required::after {
+    content: "*";
+    color: red;
+    margin-left: 4px;
+  }
 
-    .greyed #id_searchQuery {
-      color: #bbb;
-    }
+  #requiredMsg {
+    color: red;
+    font-style: italic;
+    margin-bottom: 10px;
+    text-align: right;
+  }
 
-    #dataTable td.pagedDataCount {
-      background-color: #2f426d;
-      color: #bbb !important;
-      font-size: small;
-      text-align: right;
-    }
+  .greyed #id_searchQuery {
+    color: #bbb;
+  }
+
+  #dataTable td.pagedDataCount {
+    background-color: #155d25;
+    color: #bbb !important;
+    font-size: small;
+    text-align: right;
+  }
+
+  .page-link {
+    color: #146125;
+  }
+  .active > .page-link, .page-link.active {
+    background-color: #c4e2cb;
+    border-color: #146125;
+  }
+}
