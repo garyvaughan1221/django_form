@@ -15,8 +15,6 @@ def churches_view(request):
 
     if request.method == "POST":
         form = c.ChurchSearchForm(request.POST)
-
-        # ---->  hopefully doesn't bug this <---------------
         request.session["post_flag"] = False
 
         if("countyChoices" in request.session):
@@ -43,8 +41,7 @@ def churches_view(request):
             else:
                 request.session["selectedState"] = form.cleaned_data["stateNames"]
 
-
-            ## TODO: REFACTOR THIS CODE.  may need to move up above
+            # check & del or set 'selectedCounty' session var
             selectedCounty = form.cleaned_data["countyNames"]
             if(searchType == 'by_county'):
                 request.session["selectedCounty"] = selectedCounty
@@ -53,8 +50,6 @@ def churches_view(request):
                 if("selectedCounty" in request.session):
                     del request.session["selectedCounty"]
                     form.cleaned_data["countyNames"] = "0"
-
-
 
 
             return redirect("/churches")
@@ -88,7 +83,7 @@ def churches_view(request):
                 subSearchQuery = "0"
                 selectedState = subSearchQuery
                 selectedCounty = "0"
-                stateName = ""  ## SHOULD THIS BE "0"?
+                stateName = ""
 
                 form = c.ChurchSearchForm(initial=form_data)
                 context = { "form":form }
@@ -100,10 +95,10 @@ def churches_view(request):
                     if(selectedState != '0'):
                         subSearchQuery = selectedState
 
-                        # if(searchType == 'by_county'):
-                        #     countyChoices = c.GetCountyNames(searchQuery, stateName)
-                        #     form.fields["countyNames"].choices = countyChoices
-                        #     request.session["countyChoices"] = countyChoices
+                        if(searchType == 'by_county'):
+                            countyChoices = c.GetCountiesForState(selectedState)
+                            form.fields["countyNames"].choices = countyChoices
+                            request.session["countyChoices"] = countyChoices
 
                     if("selectedCounty" in request.session):
                         selectedCounty = request.session["selectedCounty"]
@@ -150,9 +145,10 @@ def churches_view(request):
                         subSearchQuery = request.session["selectedState"]
                         context["selectedState"] = subSearchQuery
 
-                        # if(searchType == "by_county"):
-                            # countyChoices = c.GetCountyNames(searchQuery, context["stateName"])
-                            # form.fields["countyNames"].choices = countyChoices
+                        if(searchType == "by_county"):
+                            countyChoices = c.GetCountiesForState(subSearchQuery)
+                            form.fields["countyNames"].choices = countyChoices
+                            request.session["countyChoices"] = countyChoices
 
                     if('selectedCounty' in request.session):
                         selectedCounty = request.session["selectedCounty"]
@@ -171,6 +167,7 @@ def churches_view(request):
                         case 'by_county':
                             context["countyData"] = searchResults
 
+                # initial page load
                 else:
                     form = c.ChurchSearchForm()
                     summaryData = c.GetChurchesSummary()
@@ -210,8 +207,7 @@ def getSearchRegionData(searchType, searchQuery, page_number, per_page, optional
         case 'by_county':
             print(f"\tVIEWS.PY >> by county...[state] {optionalSubQuery}\t[county]: {optionalSelectedCounty}")
 
-            # optionalSubQuery = sn.getStateNamebyCode(optionalSubQuery)
-            # result = c.GetData_byCounty(searchQuery, optionalSubQuery, optionalSelectedCounty)
+            result = c.GetData_byCounty(searchQuery, optionalSubQuery, optionalSelectedCounty)
 
     # will return [] or some data...
     return c.getPagedData(result, page_number, per_page)

@@ -57,7 +57,7 @@ div.wrapper {
 
   form {
     background-color: #d6d5ff;
-    border: 1px solid #999;
+    border: 1px solid #65c77b;
     border-radius: 10px;
     padding: 20px;
     width: 300px;
@@ -71,7 +71,7 @@ div.wrapper {
   }
 
   #submitBtn {
-    background-color: #475c8a;
+    background-color: #146125;
     border: 1px solid #ccc;
     border-radius: 8px;
     color: white;

@@ -17,11 +17,7 @@ from djangoform.models.postgres_models import CountyNames as CountyNames
 
 
 
-## GLOBAL VARS
-theDB = DbClient.getDB()
-
-
-
+# this is the main class here in this file
 class ChurchSearchForm(forms.Form):
     """Returns the form vars and controls
 
@@ -136,7 +132,6 @@ def GetData_byState(searchQuery:str, subSearchQuery:str='0'):
 
     try:
         listData = []
-        # theDB = DbClient.getDB()
 
         # Subquery to get GroupName from ChurchOrgs using GroupCode
         orgs_qs = ChurchOrgs.objects.filter(groupcode=OuterRef('groupcode')).values('groupname')[:1]
@@ -161,26 +156,60 @@ def GetData_byState(searchQuery:str, subSearchQuery:str='0'):
         return listData
 
 
-def GetData_byCounty(searchQuery:str, selectedState:str='0', selectedCounty:str="0"):
-    """
-    Function to get the data by State & County with search query
 
-    - returns empty list, or a dbCollection
+def GetCountiesForState(stateCode):
+    """
+    Function to get the counties for a selected state
+
+    - returns empty list, or results in a tuple for a dropdown
     """
 
     try:
+        listData = [('0', 'Select a County')]
+
+        for county in CountyNames.objects.filter(statecode=stateCode):
+            listData.append((county.pk, str(county.countyname)))
+
+    except Exception as e:
+        print (f"Error in churches.GetCountiesForState({stateCode})", e, file=sys.stderr)
+
+    finally:
+        return listData
+
+
+def GetData_byCounty(searchQuery:str, selectedState:str, selectedCounty:str="0"):
+    """
+    Function to get the data by State & County with search query
+
+    """
+    try:
         listData = []
-        # theDB = DbClient.getDB()
-        # if(theDB is not None):
-        #     dbCollection = theDB.by_county
 
-        #     print(f"GetData_byCounty({searchQuery}, {selectedState}, {selectedCounty})")
+        # Subquery to get GroupName from ChurchOrgs using GroupCode
+        orgs_qs = ChurchOrgs.objects.filter(groupcode=OuterRef('groupcode')).values('groupname')[:1]
 
-        #     if(selectedState == ''):
-        #         raise Exception (f"churches.GetData_byCounty({searchQuery}, {selectedState}, {selectedCounty}) -->>\t selectedState is blank for some reason")
+        # Subquery to get StateName from StateNames using StateCode
+        states_qs = StateNames.objects.filter(pk=OuterRef('statecode')).values('statename')[:1]
 
-        #     ## get data
-        #     listData = County_dbQuery.getData(dbCollection, searchQuery, selectedState, selectedCounty)
+        # Subquery to get CountyName from CountyNames using CountyCode
+        county_qs = CountyNames.objects.filter(pk=OuterRef('fips')).values('countyname')[:1]
+
+        # Main query > sets groupname, statename, countyname instead of {codes}
+        qs = County_dbQuery.objects.annotate(groupname=Subquery(orgs_qs), statename=Subquery(states_qs), countyname=Subquery(county_qs))
+
+
+        # only filter by searchQuery if it's not "all"
+        if(searchQuery and searchQuery != "all"):
+            qs = qs.filter(groupname__icontains=searchQuery)
+
+        # always filter by state
+        qs = qs.filter(statecode=selectedState)
+
+        # only filter by county if a county is selected
+        if selectedCounty and selectedCounty != "0":
+            qs = qs.filter(fips=selectedCounty)
+
+        listData = list(qs.values())
 
     except Exception as e:
         print (f"Error in churches.GetData_byCounty({searchQuery}, {selectedState}, {selectedCounty})", e, file=sys.stderr)
