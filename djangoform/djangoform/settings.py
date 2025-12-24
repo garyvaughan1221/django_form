@@ -40,10 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    # 'rest_framework',
     'djangoform',
-    # 'djangoform.models',
-    'djangoform.api'
 ]
 
 MIDDLEWARE = [
@@ -103,13 +100,15 @@ WSGI_APPLICATION = 'djangoform.wsgi.application'
 #     }
 # }
 
+
+# PostgreSQL Configuration on Aiven
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'pythonProjects',
         'USER': 'avnadmin',
-        'PASSWORD': '<use your own',
-        'HOST': 'teepeewun-gvaughan-project1.c.aivencloud.com',
+        'PASSWORD': '<use your own>',
+        'HOST': '<use your own>',
         'PORT': '22305'
     }
 }

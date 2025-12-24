@@ -4,7 +4,6 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 # custom code stuff
 from django import forms
-from djangoform.api.db_client import DbClient
 
 # models
 from djangoform.models.postgres_models import National as National_dbQuery, ChurchOrgs
