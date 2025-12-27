@@ -52,7 +52,7 @@ def churches_view(request):
                     form.cleaned_data["countyNames"] = "0"
 
 
-            return redirect("/churches")
+            return redirect("/")
         else:
             print(f"\t--->\tForm is NOT valid\t<---\t")
 
