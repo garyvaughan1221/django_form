@@ -12,6 +12,16 @@
     <td>% of Adherents per Adherents</td>
     <td>% of Adherents per US population</td>
   </tr>
+
+    {% if stateData|length == 0 %}
+    <tr>
+      <td colspan="6" class="noDataFound">
+        No data found!
+      </td>
+    </tr>
+    {% endif %}
+
+
   {% for churchGroup in stateData %}
   <tr>
     <td>{{ churchGroup.statename }}</td>

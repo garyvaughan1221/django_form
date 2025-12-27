@@ -11,6 +11,16 @@
     <td>% of Adherents per Adherents</td>
     <td># of Adherents per US population</td>
   </tr>
+
+
+  {% if nationalData|length == 0 %}
+    <tr>
+      <td colspan="5" class="noDataFound">
+        No data found for the selected criteria.
+      </td>
+    </tr>
+  {% endif %}
+
   {% for churchGroup in nationalData %}
   <tr>
     <td>
