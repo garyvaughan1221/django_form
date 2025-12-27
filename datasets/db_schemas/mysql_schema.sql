@@ -1,4 +1,6 @@
 sql
+use garuwun$usrc_2020;
+
 
 CREATE TABLE state_names (
   `StateCode` VARCHAR(2) NOT NULL,
