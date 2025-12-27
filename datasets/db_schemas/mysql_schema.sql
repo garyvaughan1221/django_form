@@ -17,8 +17,9 @@ CREATE TABLE county_names (
   UNIQUE KEY county_names_FIPS_key (FIPS),
   CONSTRAINT county_names_StateCode_fkey FOREIGN KEY (`StateCode`) REFERENCES state_names (`StateCode`)
 );
-CREATE INDEX IF NOT EXISTS statecode_countynames ON county_names (`StateCode`);
-CREATE INDEX IF NOT EXISTS fips_countynames ON county_names (FIPS);
+ALTER TABLE county_names ADD INDEX statecode_countynames (StateCode);
+ALTER TABLE county_names ADD INDEX fips_countynames (FIPS);
+
 
 CREATE TABLE church_orgs (
   GroupName VARCHAR(20) NOT NULL,
@@ -27,7 +28,8 @@ CREATE TABLE church_orgs (
   UNIQUE KEY church_orgs_GroupCode_key (`GroupCode`),
   UNIQUE KEY church_orgs_GroupName_key (GroupName)
 );
-CREATE INDEX IF NOT EXISTS groupcode_churchorgs ON church_orgs (`GroupCode`);
+ALTER TABLE church_orgs ADD INDEX groupcode_churchorgs (GroupCode);
+
 
 
 
@@ -51,7 +53,8 @@ CREATE TABLE by_state (
   PRIMARY KEY (id),
   CONSTRAINT by_state_StateCode_fkey FOREIGN KEY (`StateCode`) REFERENCES state_names (`StateCode`)
 );
-CREATE INDEX IF NOT EXISTS statecode_bystate ON by_state (`StateCode`);
+ALTER TABLE by_state ADD INDEX statecode_bystate (StateCode);
+
 
 CREATE TABLE by_county (
   id BIGINT NOT NULL AUTO_INCREMENT,
@@ -66,6 +69,7 @@ CREATE TABLE by_county (
   CONSTRAINT by_county_GroupCode_fkey FOREIGN KEY (`GroupCode`) REFERENCES church_orgs (`GroupCode`),
   CONSTRAINT by_county_StateCode_fkey FOREIGN KEY (`StateCode`) REFERENCES state_names (`StateCode`)
 );
-CREATE INDEX IF NOT EXISTS fips_bycounty ON by_county (FIPS);
-CREATE INDEX IF NOT EXISTS statecode_bycounty ON by_county (`StateCode`);
+ALTER TABLE by_county ADD INDEX statecode_bycounty (StateCode);
+ALTER TABLE by_county ADD INDEX fips_bycounty (FIPS);
+
 
