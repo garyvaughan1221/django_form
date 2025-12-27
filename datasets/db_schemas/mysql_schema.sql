@@ -1,6 +1,13 @@
 sql
 use garuwun$usrc_2020;
 
+drop table by_state;
+drop table national;
+drop table state_names;
+drop table by_county;
+drop table county_names;
+drop table church_orgs;
+
 
 CREATE TABLE state_names (
   `StateCode` VARCHAR(2) NOT NULL,
@@ -71,5 +78,3 @@ CREATE TABLE by_county (
 );
 ALTER TABLE by_county ADD INDEX statecode_bycounty (StateCode);
 ALTER TABLE by_county ADD INDEX fips_bycounty (FIPS);
-
-
