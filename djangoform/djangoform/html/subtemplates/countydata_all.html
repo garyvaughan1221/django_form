@@ -12,6 +12,12 @@
     <td>Adherents</td>
   </tr>
 
+  {% if countyData|length == 0 %}
+    <tr>
+      <td colspan="5" class="noDataFound">No data found!</td>
+    </tr>
+  {% endif %}
+
   {% for churchGroup in countyData %}
   <tr>
     <td>{{ churchGroup.statename }}</td>

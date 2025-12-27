@@ -201,4 +201,10 @@ div.wrapper {
     background-color: #c4e2cb;
     border-color: #146125;
   }
+
+  .noDataFound {
+    text-align: center;
+    font-style: italic;
+    color: #900;
+  }
 }
