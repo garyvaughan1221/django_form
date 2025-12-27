@@ -22,8 +22,7 @@ Development:
    run collectstatic
 
 6. *type in terminal window:*  py manage.py runserver
-7. There ain't no home page for base path, so navigate to this url: http://127.0.0.1:8000/form/
-    ...or http://127.0.0.1/churches/
+7. http://127.0.0.1/
 
 
 
