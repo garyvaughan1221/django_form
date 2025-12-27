@@ -1,5 +1,12 @@
 sql
 
+CREATE TABLE state_names (
+  `StateCode` TEXT NOT NULL,
+  StateName TEXT NOT NULL,
+  PRIMARY KEY (`StateCode`),
+  UNIQUE KEY stateNames_StateCode_key (`StateCode`)
+);
+
 CREATE TABLE county_names (
   `StateCode` TEXT NOT NULL,
   CountyName TEXT NOT NULL,
@@ -10,13 +17,6 @@ CREATE TABLE county_names (
 );
 CREATE INDEX IF NOT EXISTS statecode_countynames ON county_names (`StateCode`);
 CREATE INDEX IF NOT EXISTS fips_countynames ON county_names (FIPS);
-
-CREATE TABLE state_names (
-  `StateCode` TEXT NOT NULL,
-  StateName TEXT NOT NULL,
-  PRIMARY KEY (`StateCode`),
-  UNIQUE KEY stateNames_StateCode_key (`StateCode`)
-);
 
 CREATE TABLE church_orgs (
   GroupName TEXT NOT NULL,
