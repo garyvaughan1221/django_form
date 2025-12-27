@@ -6,13 +6,13 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django import forms
 
 # models
-from djangoform.models.postgres_models import National as National_dbQuery, ChurchOrgs
-from djangoform.models.postgres_models import ByState as State_dbQuery
-from djangoform.models.postgres_models import ByCounty as County_dbQuery
+from djangoform.models.mysql_models import National as National_dbQuery, ChurchOrgs
+from djangoform.models.mysql_models import ByState as State_dbQuery
+from djangoform.models.mysql_models import ByCounty as County_dbQuery
 
 # for the dropdowns
-from djangoform.models.postgres_models import StateNames as StateNames
-from djangoform.models.postgres_models import CountyNames as CountyNames
+from djangoform.models.mysql_models import StateNames as StateNames
+from djangoform.models.mysql_models import CountyNames as CountyNames
 
 
 
