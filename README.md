@@ -40,7 +40,7 @@ You will find the .sql files to build the tables and the table row data in .csv 
 - I added a mysql_schema.sql file in /datasets/db_schemas folder.
 - *I did not update the settings.py file to reflect the changes I made for pythonanywhere.com hosting.  If you want help, dm me or something here on github.
 
-**To get this working on pythonanywhere took about 10 hours or so.  _If you need help_, here some things I had to change on the platform:**
+**To get this working on _pythonanywhere_ took about 10 hours or so.  _If you need help_, here some things I had to change on the platform:**
  - settings.py
     - DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
     - ALLOWED_HOSTS = ['garuwun.pythonanywhere.com', 'www.garuwun.pythonanywhere.com', '127.0.0.1', 'localhost']
@@ -55,6 +55,7 @@ You will find the .sql files to build the tables and the table row data in .csv 
           }  
       }
 - in my virtual environment console, I ran 'pip install mysqlclient' because it was originally supposed to be postGresSql
+- also, don't forget to run 'py manage.py collectstatic' to get the css and javascript!
 
 
 
