@@ -4,14 +4,14 @@ use garuwun$usrc_2020;
 
 CREATE TABLE state_names (
   `StateCode` VARCHAR(2) NOT NULL,
-  StateName VARCHAR(7) NOT NULL,
+  StateName VARCHAR(20) NOT NULL,
   PRIMARY KEY (`StateCode`),
   UNIQUE KEY stateNames_StateCode_key (`StateCode`)
 );
 
 CREATE TABLE county_names (
   `StateCode` VARCHAR(2) NOT NULL,
-  CountyName VARCHAR(14) NOT NULL,
+  CountyName VARCHAR(33) NOT NULL,
   FIPS INT NOT NULL,
   PRIMARY KEY (FIPS),
   UNIQUE KEY county_names_FIPS_key (FIPS),
@@ -22,7 +22,7 @@ ALTER TABLE county_names ADD INDEX fips_countynames (FIPS);
 
 
 CREATE TABLE church_orgs (
-  GroupName VARCHAR(20) NOT NULL,
+  GroupName VARCHAR(111) NOT NULL,
   `GroupCode` VARCHAR(3) NOT NULL,
   PRIMARY KEY (`GroupCode`),
   UNIQUE KEY church_orgs_GroupCode_key (`GroupCode`),
