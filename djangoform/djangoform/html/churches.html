@@ -15,6 +15,28 @@
 
 
 <div class="wrapper">
+    <div class="header">
+        <p>
+            <button class="btn" type="button" data-bs-toggle="collapse" data-bs-target="#summary" aria-expanded="false" aria-controls="summary">
+                Read Me!
+            </button>
+        </p>
+        <div class="collapse" id="summary">
+            <div class="card-header">App Info Summary</div>
+            <div class="card card-body">
+                <p>
+                    This web application allows users to search and view data on church organizations in the United States based on the 'USRC 2020' dataset.
+                    Users can search by church name, state, or county, and view summarized statistics as well as detailed listings.
+                    The data includes information such as church names, (general)location, denominations, and membership counts.
+                </p>
+                <p>
+                    Users can enter a search query to find specific churches or type "all" to retrieve the entire dataset.
+                    The application provides options to filter results by state and county, and displays summary statistics including total churches found and reported membership (adherents) per church.
+                </p>
+            </div>
+        </div>
+    </div>
+
     <div class="col1">
         <form action="" method="post" id="churchesSearchForm">
             {% csrf_token %}
