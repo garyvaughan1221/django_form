@@ -1,4 +1,4 @@
-# For example purposes only.
+# I made this!
 
 If you know python, it seems logical on how to run it.
 *If you don't then you need to do a few things to get it to run.
@@ -34,7 +34,7 @@ The data came from a spreadsheet I found online.  The files are in the /datasets
 
 I probably should've used PostGresSqL, but I didn't know the data well enough when I started the project so I went with MongoDB because I already had an account. Now, I see the relational data and some of the lookup tables I can make in PostGresSql when I migrate the app over to relational data and Django Models.  It wasn't that difficult to get the app working without models.  The hardest part was finding the right information in Google.  Phase Two or Three will be relational data; and the models are in the model folder...but they're useless now.  Maybe a base foundation for the PostGresSQL models???
 
-**Update:  THIS IS THE MONGODB VERSION.  Use the Postgres branch if you want mySQL or PostGresSql.
+🔴 **Update:  THIS IS THE MONGODB VERSION.  Use the [Postgres branch](https://github.com/garyvaughan1221/django_form/tree/postGres_branch) if you want mySQL or PostGresSql.
 
 ## by_metro && by_county Searches
 The 'Metro Area Search', 'by_metro', code could've been better since it is a whole list of metro areas that have to populate that dropdown.  However, I didn't care.  I don't care.  I could duplicate the code used (later) in 'by_county' search, but this is an example app and be fixed in the future with lookup tables and such.
